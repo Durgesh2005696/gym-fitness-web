@@ -1,0 +1,146 @@
+Create a professional fitness management web application for a personal trainer with full control, tracking, and paid access system.
+
+Website Purpose:
+This platform allows trainers to manage clients, assign diet & workout plans, track progress, and collect feedback with time-based paid access.
+
+User Roles:
+1. Admin (Main Owner)
+2. Trainer (Paid user – ₹500/month)
+3. Client (Paid user – Monthly paid access)
+
+========================
+ADMIN PANEL FEATURES
+========================
+- Admin login dashboard
+- Create, edit, approve, block trainers
+- Upload QR code for payments
+- View all trainers & clients
+- View payment history & expiry
+- Set trainer subscription price (₹500/month)
+- Full system control
+
+========================
+TRAINER PANEL FEATURES
+========================
+- Trainer registration & login
+- ₹500/month subscription via QR code
+- Access only after admin approval
+- Add & manage clients
+- Create & assign diet plans:
+  - Multiple meals per day
+- Create & assign workout plans
+- Modify diet/workout ANYTIME (real-time update for client)
+- Set and extend plan validity
+- Update client:
+  - Weight
+  - Body measurements
+  - Progress notes
+- View client:
+  - Meal ratings
+  - Daily reviews
+  - Water intake logs
+  - Weight history
+- Trainer access auto-disabled after subscription expiry
+
+========================
+CLIENT PANEL FEATURES
+========================
+- Client login
+- Monthly payment required for access
+- Access active only for 30 days after approval
+- Auto lock after expiry with renewal message
+
+Client Dashboard Includes:
+- Assigned diet plan (read-only)
+- Assigned workout plan (read-only)
+
+------------------------
+WATER INTAKE TRACKER
+------------------------
+- Daily water intake tracker
+- Predefined buttons:
+  - 250 ml
+  - 500 ml
+  - 1 liter
+- Daily goal (set by trainer)
+- Visual progress bar (liters consumed / target)
+- Date-wise water intake history
+- Trainer can view water logs
+
+------------------------
+DIET PLAN INTERACTION
+------------------------
+- Each meal has 5-star rating system
+- Client can rate each meal daily
+- Bottom of daily diet plan:
+  - Comment / review box
+  - Client can write:
+    - Missed meals
+    - Extra food eaten
+    - Hunger / energy levels
+- Date-wise review storage
+- Trainer can view full feedback history
+
+------------------------
+WEIGHT & PROGRESS TRACKING
+------------------------
+- Trainer can update client weight anytime
+- Auto date-wise weight history
+- Progress notes section by trainer
+- Client can view progress timeline
+- Visual charts (weight change over time)
+
+========================
+PAYMENT SYSTEM
+========================
+- Manual payment via QR code
+- Upload payment screenshot
+- Admin / Trainer approval required
+- Access auto expires after 30 days
+
+========================
+SECURITY FEATURES
+========================
+- Disable right-click
+- Disable text selection
+- Disable screenshot attempts (best possible JS/CSS)
+- Block inspect element
+- Dynamic watermark (Client Name + Date)
+- One-device login restriction
+
+========================
+TECHNICAL REQUIREMENTS
+========================
+- Modern dark fitness UI
+- Mobile-first responsive design
+- Secure authentication
+- Role-based access control
+- Expiry-based content visibility
+- Date-wise tracking system
+- Clean & scalable architecture
+
+========================
+PAGES REQUIRED
+========================
+- Home
+- Login / Register
+- Admin Dashboard
+- Trainer Dashboard
+- Client Dashboard
+- Diet Plan Viewer
+- Workout Plan Viewer
+- Water Intake Tracker
+- Progress Tracker
+- Payment Page
+- Plan Expiry Page
+
+========================
+OUTPUT REQUIREMENT
+========================
+Generate complete frontend + backend architecture including:
+- Database schema (users, plans, meals, ratings, reviews, water logs, weight logs, payments)
+- Authentication flow
+- Access & expiry logic
+- UI wireframes
+- Security handling
+Use production-ready scalable structure.
