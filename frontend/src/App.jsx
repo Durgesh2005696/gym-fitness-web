@@ -124,10 +124,25 @@ const DashboardHandler = () => {
 }
 
 const ProtectedRoute = ({ children }) => {
-    const { isAuthenticated } = useAuthStore();
+    const { isAuthenticated, user } = useAuthStore();
+
     if (!isAuthenticated) {
         return <Navigate to="/login" />;
     }
+
+    // Admin always has access
+    if (user?.role === 'ADMIN') {
+        return children;
+    }
+
+    // Check if Active & Subscription Valid
+    const isExpired = !user?.isActive || (user?.subscriptionExpiresAt && new Date(user.subscriptionExpiresAt) < new Date());
+
+    // If we have no subscription date, we assume expired/new user who hasn't paid
+    if (isExpired || !user?.subscriptionExpiresAt) {
+        return <Navigate to="/renew" />;
+    }
+
     return children;
 };
 

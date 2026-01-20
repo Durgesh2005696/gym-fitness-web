@@ -27,7 +27,8 @@ exports.register = async (req, res) => {
                 email,
                 password: hashedPassword,
                 role: role || 'CLIENT',
-                isActive: false,
+                isActive: role === 'ADMIN', // Only Admin is active by default
+                subscriptionExpiresAt: role === 'ADMIN' ? null : null, // Others must pay
             },
         });
 
