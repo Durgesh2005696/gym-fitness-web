@@ -46,9 +46,24 @@ model ClientProfile {
   id                  String @id @default(uuid())
   userId              String @unique
   user                User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  currentWeight       Float?
+  
+  // Questionnaire Data
+  age                 Int?
   height              Float?
-  dietaryRestrictions String?
+  currentWeight       Float?
+  currentWorkout      String?
+  currentDiet         String?
+  injuries            String?
+  dietType            String? // VEG, NON_VEG
+  lactoseIntolerant   Boolean? @default(false)
+  foodAllergies       String?
+  workoutTime         String?
+  weakParts           String?
+  strongParts         String?
+  
+  isQuestionnaireFilled Boolean @default(false)
+  
+  dietaryRestrictions String? // Legacy, keeping for safety or merging into allergies/type
   
   // Assigned Trainer
   trainerId String?
