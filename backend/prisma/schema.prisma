@@ -84,6 +84,7 @@ model Payment {
   user          User          @relation(fields: [userId], references: [id])
   amount        Float
   screenshotUrl String?
-  status        String @default("PENDING")
+  transactionId String?
+  status        String @default("PENDING") // PENDING, APPROVED, REJECTED
   createdAt     DateTime      @default(now())
 }
