@@ -8,6 +8,7 @@ router.get('/clients', protect, userController.getClients);
 router.get('/trainers', protect, admin, userController.getAllTrainers);
 router.put('/status', protect, admin, userController.toggleUserStatus);
 router.put('/assign', protect, userController.assignTrainer);
-router.put('/renew', protect, admin, userController.renewSubscription); // NEW
+router.put('/renew', protect, admin, userController.renewSubscription);
+router.delete('/:id', protect, admin, userController.deleteUser); // NEW
 
 module.exports = router;

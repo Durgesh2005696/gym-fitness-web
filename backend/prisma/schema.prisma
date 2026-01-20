@@ -37,7 +37,7 @@ model User {
 model TrainerProfile {
   id             String @id @default(uuid())
   userId         String @unique
-  user           User   @relation(fields: [userId], references: [id])
+  user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   specialization String?
   bio            String?
 }
@@ -45,7 +45,7 @@ model TrainerProfile {
 model ClientProfile {
   id                  String @id @default(uuid())
   userId              String @unique
-  user                User   @relation(fields: [userId], references: [id])
+  user                User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   currentWeight       Float?
   height              Float?
   dietaryRestrictions String?
@@ -61,7 +61,7 @@ model ClientProfile {
 model Plan {
   id              String   @id @default(uuid())
   clientProfileId String
-  client          ClientProfile @relation(fields: [clientProfileId], references: [id])
+  client          ClientProfile @relation(fields: [clientProfileId], references: [id], onDelete: Cascade)
   type            String
   data            String   // JSON string containing plan details (meals or exercises)
   validUntil      DateTime?
@@ -72,7 +72,7 @@ model Plan {
 model Log {
   id              String   @id @default(uuid())
   clientProfileId String
-  client          ClientProfile @relation(fields: [clientProfileId], references: [id])
+  client          ClientProfile @relation(fields: [clientProfileId], references: [id], onDelete: Cascade)
   type            String
   value           String   // "2.5" (liters), "75.5" (kg), or "Great workout!"
   date            DateTime @default(now())
@@ -81,7 +81,7 @@ model Log {
 model Payment {
   id            String        @id @default(uuid())
   userId        String
-  user          User          @relation(fields: [userId], references: [id])
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   amount        Float
   screenshotUrl String?
   transactionId String?
