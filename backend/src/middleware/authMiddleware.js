@@ -91,3 +91,26 @@ exports.trainer = (req, res, next) => {
         res.status(403).json({ message: 'Not authorized as a trainer' });
     }
 };
+
+exports.checkSubscription = (req, res, next) => {
+    // Admin doesn't need subscription
+    if (req.user && req.user.role === 'ADMIN') {
+        return next();
+    }
+
+    if (!req.user || !req.user.subscriptionExpiresAt) {
+        // If no subscription date set, assume INACTIVE/EXPIRED unless Admin manually set it?
+        // Or for new users, maybe they need to pay first.
+        // Let's be strict: No Date = Expired.
+        return res.status(403).json({ message: 'Subscription required', code: 'EXPIRED' });
+    }
+
+    const now = new Date();
+    const expiry = new Date(req.user.subscriptionExpiresAt);
+
+    if (now > expiry) {
+        return res.status(403).json({ message: 'Subscription expired', code: 'EXPIRED' });
+    }
+
+    next();
+};

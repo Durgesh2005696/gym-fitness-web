@@ -72,4 +72,15 @@ const useAuthStore = create((set) => ({
     }
 }));
 
+// Axios Interceptor for Expiry
+axios.interceptors.response.use(
+    response => response,
+    error => {
+        if (error.response && error.response.status === 403 && error.response.data.code === 'EXPIRED') {
+            window.location.href = '/renew';
+        }
+        return Promise.reject(error);
+    }
+);
+
 export default useAuthStore;

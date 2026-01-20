@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
+import Renewal from './pages/Renewal';
 import AdminDashboard from './pages/AdminDashboard';
 import TrainerDashboard from './pages/TrainerDashboard';
 import ClientDashboard from './pages/ClientDashboard';
@@ -146,6 +147,7 @@ function App() {
                 <SecurityLayer>
                     <Routes>
                         <Route path="/login" element={<Login />} />
+                        <Route path="/renew" element={<Renewal />} />
                         <Route path="/" element={
                             <ProtectedRoute>
                                 <DashboardHandler />

@@ -50,35 +50,9 @@ exports.toggleUserStatus = async (req, res) => {
     }
 };
 
-exports.getAllTrainers = async (req, res) => {
-    try {
-        const trainers = await prisma.user.findMany({
-            where: { role: 'TRAINER' },
-            include: { trainerProfile: true }
-        });
-        res.json(trainers);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-exports.toggleUserStatus = async (req, res) => {
-    const { userId, isActive } = req.body;
-    try {
-        const updatedUser = await prisma.user.update({
-            where: { id: userId },
-            data: { isActive }
-        });
-        res.json(updatedUser);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
 exports.assignTrainer = async (req, res) => {
-    const { clientEmail, trainerId } = req.body; // Changed from clientId to clientEmail
+    const { clientEmail, trainerId } = req.body;
     try {
-        // Find user by email first to get the ID
         const clientUser = await prisma.user.findUnique({
             where: { email: clientEmail }
         });
@@ -96,6 +70,33 @@ exports.assignTrainer = async (req, res) => {
             data: { trainerId }
         });
         res.json(updatedClient);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.renewSubscription = async (req, res) => {
+    const { userId, days = 30 } = req.body;
+    try {
+        const user = await prisma.user.findUnique({ where: { id: userId } });
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        let newExpiry = new Date();
+        // If already valid in future, extend from that date
+        if (user.subscriptionExpiresAt && new Date(user.subscriptionExpiresAt) > new Date()) {
+            newExpiry = new Date(user.subscriptionExpiresAt);
+        }
+
+        newExpiry.setDate(newExpiry.getDate() + parseInt(days));
+
+        const updatedUser = await prisma.user.update({
+            where: { id: userId },
+            data: {
+                subscriptionExpiresAt: newExpiry,
+                isActive: true
+            }
+        });
+        res.json(updatedUser);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

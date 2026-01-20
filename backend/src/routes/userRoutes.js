@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
-const { protect, admin } = require('../middleware/authMiddleware'); // Assuming these exist, need to check middleware
+const { protect, admin } = require('../middleware/authMiddleware');
 
-// Placeholder for middleware if not exists, verifying next step.
-// Actually, check middleware folder.
-router.get('/', userController.getAllUsers);
-router.get('/clients', userController.getClients);
-router.put('/assign', userController.assignTrainer);
+router.get('/', protect, admin, userController.getAllUsers);
+router.get('/clients', protect, userController.getClients);
+router.get('/trainers', protect, admin, userController.getAllTrainers);
+router.put('/status', protect, admin, userController.toggleUserStatus);
+router.put('/assign', protect, userController.assignTrainer);
+router.put('/renew', protect, admin, userController.renewSubscription); // NEW
 
 module.exports = router;
