@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CreditCard, Clock, CheckCircle, QrCode, Upload, User } from 'lucide-react';
 import useAuthStore from '../store/authStore';
-import api from '../utils/api';
+import api, { BASE_URL } from '../utils/api';
 
 const ClientPayment = () => {
     const { user, logout, refreshUser } = useAuthStore();
@@ -177,7 +177,7 @@ const ClientPayment = () => {
                                 </p>
                                 <div className="bg-white p-3 rounded-xl">
                                     <img
-                                        src={trainerInfo.qrCode}
+                                        src={trainerInfo.qrCode?.startsWith('http') ? trainerInfo.qrCode : `${BASE_URL}${trainerInfo.qrCode}`}
                                         alt="Trainer Payment QR"
                                         className="w-48 h-48 object-contain"
                                     />

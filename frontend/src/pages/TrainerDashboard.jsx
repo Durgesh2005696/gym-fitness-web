@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Search, Plus, Filter, User, Calendar, CreditCard, ChevronRight, BarChart2, Activity, MessageSquare, Camera, Check, X, LogOut, Upload, QrCode, BookOpen, Trash2, Dumbbell, Pill } from 'lucide-react';
 import WorkoutLibrary from '../components/WorkoutLibrary';
 import SupplementLibrary from '../components/SupplementLibrary';
-import api from '../utils/api';
+import api, { BASE_URL } from '../utils/api';
 import useAuthStore from '../store/authStore';
 import FoodLibrary from '../components/FoodLibrary';
 import DietPlanBuilder from '../components/DietPlanBuilder';
@@ -73,7 +73,7 @@ const TrainerDashboard = () => {
 
     const handleApprovePayment = async (paymentId) => {
         try {
-            await api.put(`/ payments / ${paymentId}/approve-client`, {}, {
+            await api.put(`/payments/${paymentId}/approve-client`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setMessage('Client payment approved! They now have full access.');
@@ -432,7 +432,7 @@ const TrainerDashboard = () => {
                     <div className="flex items-center gap-4">
                         {user.paymentQrCode && (
                             <img
-                                src={user.paymentQrCode}
+                                src={user.paymentQrCode?.startsWith('http') ? user.paymentQrCode : `${BASE_URL}${user.paymentQrCode}`}
                                 alt="Your Payment QR"
                                 className="w-16 h-16 rounded-xl border border-white/10 object-contain bg-white"
                             />

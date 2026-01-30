@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api from '../utils/api';
+import api, { BASE_URL } from '../utils/api';
 import useAuthStore from '../store/authStore';
 
 const AdminDashboard = () => {
@@ -91,7 +91,7 @@ const AdminDashboard = () => {
             setMsg('Payment Approved!');
             fetchAllData();
             setTimeout(() => setMsg(''), 2000);
-        } catch (err) { alert('Error'); }
+        } catch (err) { alert('Error: ' + (err.response?.data?.message || err.message)); }
     };
 
     const rejectPayment = async (id) => {
@@ -99,7 +99,7 @@ const AdminDashboard = () => {
         try {
             await api.put(`/payments/${id}/reject`, {}, config);
             fetchAllData();
-        } catch (err) { alert('Error'); }
+        } catch (err) { alert('Error: ' + (err.response?.data?.message || err.message)); }
     };
 
     const saveSettings = async () => {
