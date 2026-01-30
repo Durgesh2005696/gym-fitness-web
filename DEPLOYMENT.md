@@ -81,11 +81,13 @@
    ```
 
 ### Step 1.4: Configure for Prisma
-For Prisma, use the **Transaction pooler** URL (port 6543) with `?pgbouncer=true`:
-```env
-DATABASE_URL="postgresql://postgres.[PROJECT-REF]:[YOUR-PASSWORD]@aws-0-ap-south-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
+For Render (to avoid IPv6 issues), use the **Session Pooler** URL (port 5432) for **BOTH** variables:
 
-# For migrations, use Direct connection (port 5432):
+```env
+# DATABASE_URL (Session Pooler - Port 5432)
+DATABASE_URL="postgresql://postgres.[PROJECT-REF]:[YOUR-PASSWORD]@aws-0-ap-south-1.pooler.supabase.com:5432/postgres"
+
+# DIRECT_URL (Session Pooler - Port 5432 - Same as above for Render)
 DIRECT_URL="postgresql://postgres.[PROJECT-REF]:[YOUR-PASSWORD]@aws-0-ap-south-1.pooler.supabase.com:5432/postgres"
 ```
 
@@ -120,7 +122,7 @@ datasource db {
 ### Step 2.2: Update Local .env
 Create/update `backend/.env`:
 ```env
-DATABASE_URL="postgresql://postgres.[ref]:[password]@aws-0-ap-south-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
+DATABASE_URL="postgresql://postgres.[ref]:[password]@aws-0-ap-south-1.pooler.supabase.com:5432/postgres"
 DIRECT_URL="postgresql://postgres.[ref]:[password]@aws-0-ap-south-1.pooler.supabase.com:5432/postgres"
 JWT_SECRET=your-super-secret-jwt-key-here
 FRONTEND_URL=http://localhost:3000
@@ -173,14 +175,16 @@ node prisma/seedSupplements.js
 ### Step 3.3: Set Environment Variables
 Click **"Advanced"** → **"Add Environment Variable"**:
 
-| Key | Value |
-|-----|-------|
-| `NODE_ENV` | `production` |
-| `DATABASE_URL` | `postgresql://postgres.[ref]:[password]@aws-0-ap-south-1.pooler.supabase.com:6543/postgres?pgbouncer=true` |
-| `DIRECT_URL` | `postgresql://postgres.[ref]:[password]@aws-0-ap-south-1.pooler.supabase.com:5432/postgres` |
-| `JWT_SECRET` | `[generate-random-64-char-string]` |
-| `FRONTEND_URL` | `https://fitwithdy.pages.dev` |
-| `PORT` | `10000` |
+| Key | Value | Description |
+|-----|-------|-------------|
+| `NODE_ENV` | `production` | Production mode |
+| `DATABASE_URL` | `postgresql://...:5432/postgres` | **Use Supabase Session Pooler (Port 5432)** |
+| `DIRECT_URL` | `postgresql://...:5432/postgres` | **Use Supabase Session Pooler (Port 5432)** |
+| `JWT_SECRET` | `[generate-random-string]` | Secure key |
+| `FRONTEND_URL` | `https://fitwithdy.pages.dev` | Cloudflare URL |
+| `PORT` | `10000` | Render Port |
+
+**IMPORTANT:** Use the Session Pooler URL (Port 5432) for `DATABASE_URL` to prevent "FATAL: Tenant or user not found" errors on Render.
 
 ### Step 3.4: Deploy
 1. Click **"Create Web Service"**
@@ -232,7 +236,9 @@ Value: https://fitwithdy-api.onrender.com
 
 ## PHASE 5: Image Storage (Supabase Storage)
 
-For production, use Supabase Storage instead of local uploads.
+**CRITICAL NOTE:** Render's free tier has an "ephemeral filesystem". This means uploaded images (profile pics, progress photos) **WILL BE DELETED** everytime the server restarts (which happens frequently on free tier).
+
+To fix this, you must integrate Supabase Storage or Cloudinary.
 
 ### Step 5.1: Enable Storage in Supabase
 1. Go to Supabase Dashboard → **Storage**
@@ -384,9 +390,9 @@ curl -X POST https://fitwithdy-api.onrender.com/api/auth/login \
 ### Default Credentials (After Seeding)
 | Role | Email | Password |
 |------|-------|----------|
-| Admin | `admin@fitwithdy.com` | `admin123` |
-| Trainer | `trainer@fitwithdy.com` | `trainer123` |
-| Client | `client@fitwithdy.com` | `client123` |
+| Admin | `admin@example.com` | `password123` |
+| Trainer | `trainer@example.com` | `password123` |
+| Client | `client@example.com` | `password123` |
 
 ---
 
