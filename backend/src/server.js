@@ -11,8 +11,23 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
+// CORS Configuration for production
+const allowedOrigins = [
+    'http://localhost:3000',
+    'http://localhost:5173',
+    process.env.FRONTEND_URL
+].filter(Boolean);
+
 app.use(cors({
-    origin: process.env.FRONTEND_URL || '*',
+    origin: function (origin, callback) {
+        // Allow requests with no origin (mobile apps, curl, etc)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin) || process.env.NODE_ENV !== 'production') {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true
 }));
 app.use(helmet());
@@ -20,6 +35,15 @@ app.use(morgan('dev'));
 app.use(express.json({ limit: '10mb' })); // Increased to support larger JSON payloads
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
+// Health check endpoint for Render
+app.get('/api/health', (req, res) => {
+    res.status(200).json({
+        status: 'ok',
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV || 'development'
+    });
+});
 
 // Routes Placeholder
 app.get('/', (req, res) => {

@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
+    "build": "npx prisma generate",
     "seed": "node prisma/seed.js",
+    "seed:all": "node prisma/seed.js && node prisma/seedFoods.js && node prisma/seedExercises.js && node prisma/seedSupplements.js",
     "test": "jest --verbose --runInBand",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage"
