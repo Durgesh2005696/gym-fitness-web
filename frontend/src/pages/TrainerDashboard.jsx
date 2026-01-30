@@ -845,7 +845,7 @@ const TrainerDashboard = () => {
                                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                                     {clientDetails.photos.map(photo => (
                                                         <div key={photo.id} className="aspect-[3/4] bg-black/40 rounded-xl overflow-hidden relative border border-white/10 group">
-                                                            <img src={photo.photoUrl} alt="Progress" className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity" />
+                                                            <img src={photo.photoUrl?.startsWith('http') ? photo.photoUrl : `${BASE_URL}${photo.photoUrl}`} alt="Progress" className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity" />
                                                             <div className="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
                                                                 <p className="text-white text-xs font-bold uppercase">{photo.photoType}</p>
                                                                 <p className="text-gray-400 text-[10px]">{new Date(photo.uploadedAt).toLocaleDateString()}</p>
