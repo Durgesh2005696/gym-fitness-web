@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fit With DY - Complete User Guide</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0a0a;
+            --bg-card: #111111;
+            --bg-card-hover: #1a1a1a;
+            --red-primary: #dc2626;
+            --red-glow: rgba(220, 38, 38, 0.3);
+            --green-accent: #22c55e;
+            --blue-accent: #3b82f6;
+            --purple-accent: #a855f7;
+            --yellow-accent: #eab308;
+            --text-white: #ffffff;
+            --text-gray: #9ca3af;
+            --text-muted: #6b7280;
+            --border-subtle: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-white);
+            line-height: 1.7;
+        }
+
+        /* Page Break for PDF */
+        .page-break {
+            page-break-after: always;
+            break-after: page;
+        }
+
+        /* Cover Page */
+        .cover-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a0a 50%, #0a0a0a 100%);
+            padding: 4rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cover-page::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center, rgba(220, 38, 38, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .cover-logo {
+            font-size: 5rem;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff 0%, #dc2626 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .cover-subtitle {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-gray);
+            margin-bottom: 3rem;
+        }
+
+        .cover-tagline {
+            font-size: 1.2rem;
+            color: var(--red-primary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 2rem;
+            margin-top: 2rem;
+        }
+
+        .cover-version {
+            position: absolute;
+            bottom: 2rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        /* Section Pages */
+        .section {
+            min-height: 100vh;
+            padding: 4rem 3rem;
+            background: var(--bg-dark);
+        }
+
+        .section-header {
+            margin-bottom: 3rem;
+            border-bottom: 2px solid var(--red-primary);
+            padding-bottom: 1.5rem;
+        }
+
+        .section-number {
+            display: inline-block;
+            background: var(--red-primary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            margin-right: 1rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -0.01em;
+            display: inline;
+            vertical-align: middle;
+        }
+
+        .section-content {
+            max-width: 1000px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-white);
+        }
+
+        /* Feature Lists */
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            padding: 0.75rem 0;
+            padding-left: 2rem;
+            position: relative;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--green-accent);
+            font-weight: 700;
+        }
+
+        /* Role Cards */
+        .role-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .role-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border-subtle);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .role-card.admin {
+            border-color: rgba(220, 38, 38, 0.5);
+        }
+
+        .role-card.trainer {
+            border-color: rgba(34, 197, 94, 0.5);
+        }
+
+        .role-card.client {
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+
+        .role-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+        }
+
+        .role-card.admin .role-icon {
+            background: rgba(220, 38, 38, 0.2);
+            color: var(--red-primary);
+        }
+
+        .role-card.trainer .role-icon {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--green-accent);
+        }
+
+        .role-card.client .role-icon {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--blue-accent);
+        }
+
+        .role-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .role-desc {
+            color: var(--text-gray);
+            font-size: 0.95rem;
+        }
+
+        /* Screenshot Container */
+        .screenshot-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .screenshot-container img {
+            max-width: 100%;
+            border-radius: 0.75rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .screenshot-caption {
+            margin-top: 1rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            font-style: italic;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .info-box.warning {
+            background: rgba(234, 179, 8, 0.1);
+            border-color: rgba(234, 179, 8, 0.3);
+        }
+
+        .info-box-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Step by Step */
+        .steps {
+            counter-reset: step;
+        }
+
+        .step {
+            position: relative;
+            padding-left: 3.5rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .step::before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2.5rem;
+            height: 2.5rem;
+            background: var(--red-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .step-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-desc {
+            color: var(--text-gray);
+        }
+
+        /* Two Column Layout */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        /* Library Cards */
+        .library-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .library-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border-subtle);
+            border-radius: 1.25rem;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .library-card.food {
+            border-color: rgba(34, 197, 94, 0.4);
+        }
+
+        .library-card.workout {
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+
+        .library-card.supplement {
+            border-color: rgba(168, 85, 247, 0.4);
+        }
+
+        .library-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .library-card.food .library-icon {
+            color: var(--green-accent);
+        }
+
+        .library-card.workout .library-icon {
+            color: var(--blue-accent);
+        }
+
+        .library-card.supplement .library-icon {
+            color: var(--purple-accent);
+        }
+
+        .library-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .library-count {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        /* Benefits Grid */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .benefit-card {
+            background: var(--bg-card);
+            border-radius: 1.25rem;
+            padding: 2rem;
+        }
+
+        .benefit-card h4 {
+            color: var(--red-primary);
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+
+        .benefit-card ul {
+            list-style: none;
+        }
+
+        .benefit-card li {
+            padding: 0.5rem 0;
+            color: var(--text-gray);
+            font-size: 0.95rem;
+        }
+
+        /* Footer */
+        .final-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0505 100%);
+        }
+
+        .final-logo {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            color: var(--text-white);
+        }
+
+        .final-tagline {
+            font-size: 1.5rem;
+            color: var(--red-primary);
+            font-weight: 500;
+            margin-bottom: 3rem;
+        }
+
+        .final-footer {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-top: 3rem;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .page-break {
+                page-break-after: always;
+            }
+
+            .section {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- COVER PAGE -->
+    <div class="cover-page">
+        <div class="cover-logo">FIT WITH DY</div>
+        <div class="cover-subtitle">Complete User Guide</div>
+        <div
+            style="width: 100px; height: 4px; background: linear-gradient(90deg, transparent, var(--red-primary), transparent); margin: 2rem 0;">
+        </div>
+        <div class="cover-tagline">Transforming Fitness Coaching Digitally</div>
+        <div class="cover-version">Version 1.0 | 2026</div>
+    </div>
+    <div class="page-break"></div>
+
+    <!-- TABLE OF CONTENTS -->
+    <div class="section">
+        <div class="section-header">
+            <span class="section-title">Table of Contents</span>
+        </div>
+        <div class="section-content">
+            <div class="card">
+                <ul style="list-style: none; font-size: 1.1rem;">
+                    <li style="padding: 1rem 0; border-bottom: 1px solid var(--border-subtle);">
+                        <span style="color: var(--red-primary); font-weight: 700;">01</span> &nbsp;&nbsp; Introduction
+                    </li>
+                    <li style="padding: 1rem 0; border-bottom: 1px solid var(--border-subtle);">
+                        <span style="color: var(--red-primary); font-weight: 700;">02</span> &nbsp;&nbsp; User Roles
+                        Overview
+                    </li>
+                    <li style="padding: 1rem 0; border-bottom: 1px solid var(--border-subtle);">
+                        <span style="color: var(--red-primary); font-weight: 700;">03</span> &nbsp;&nbsp; Admin Panel
+                        Guide
+                    </li>
+                    <li style="padding: 1rem 0; border-bottom: 1px solid var(--border-subtle);">
+                        <span style="color: var(--red-primary); font-weight: 700;">04</span> &nbsp;&nbsp; Trainer
+                        Dashboard Guide
+                    </li>
+                    <li style="padding: 1rem 0; border-bottom: 1px solid var(--border-subtle);">
+                        <span style="color: var(--red-primary); font-weight: 700;">05</span> &nbsp;&nbsp; Client
+                        Dashboard Guide
+                    </li>
+                    <li style="padding: 1rem 0; border-bottom: 1px solid var(--border-subtle);">
+                        <span style="color: var(--red-primary); font-weight: 700;">06</span> &nbsp;&nbsp; Payment &
+                        Subscription System
+                    </li>
+                    <li style="padding: 1rem 0; border-bottom: 1px solid var(--border-subtle);">
+                        <span style="color: var(--red-primary); font-weight: 700;">07</span> &nbsp;&nbsp; Libraries
+                        System
+                    </li>
+                    <li style="padding: 1rem 0; border-bottom: 1px solid var(--border-subtle);">
+                        <span style="color: var(--red-primary); font-weight: 700;">08</span> &nbsp;&nbsp; Progress
+                        Tracking
+                    </li>
+                    <li style="padding: 1rem 0; border-bottom: 1px solid var(--border-subtle);">
+                        <span style="color: var(--red-primary); font-weight: 700;">09</span> &nbsp;&nbsp; Security &
+                        Access Control
+                    </li>
+                    <li style="padding: 1rem 0;">
+                        <span style="color: var(--red-primary); font-weight: 700;">10</span> &nbsp;&nbsp; Benefits of
+                        the System
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="page-break"></div>
+
+    <!-- SECTION 1: INTRODUCTION -->
+    <div class="section">
+        <div class="section-header">
+            <span class="section-number">1</span>
+            <h1 class="section-title">Introduction</h1>
+        </div>
+        <div class="section-content">
+            <p style="font-size: 1.2rem; color: var(--text-gray); margin-bottom: 2rem;">
+                Welcome to <strong style="color: var(--text-white);">Fit With DY</strong> — a comprehensive digital
+                fitness coaching platform designed to revolutionize how fitness businesses operate and how trainers
+                connect with their clients.
+            </p>
+
+            <div class="card">
+                <h3 class="card-title">What is Fit With DY?</h3>
+                <p style="color: var(--text-gray);">
+                    Fit With DY is a complete fitness management ecosystem that bridges the gap between fitness
+                    professionals and their clients. The platform provides powerful tools for creating personalized diet
+                    plans, customized workout routines, and comprehensive progress tracking — all in one unified system.
+                </p>
+            </div>
+
+            <h3 style="margin: 2rem 0 1rem; font-size: 1.5rem;">The Platform Enables:</h3>
+
+            <div class="two-col">
+                <div class="card">
+                    <h4 style="color: var(--red-primary); margin-bottom: 1rem;">🔴 For Administrators</h4>
+                    <p style="color: var(--text-gray);">Complete control over the fitness business — manage trainers,
+                        clients, subscriptions, and payments from a single dashboard.</p>
+                </div>
+                <div class="card">
+                    <h4 style="color: var(--green-accent); margin-bottom: 1rem;">🟢 For Trainers</h4>
+                    <p style="color: var(--text-gray);">Professional coaching tools to create and deliver personalized
+                        plans, track client progress, and manage their client roster efficiently.</p>
+                </div>
+            </div>
+            <div class="card" style="max-width: 50%;">
+                <h4 style="color: var(--blue-accent); margin-bottom: 1rem;">🔵 For Clients</h4>
+                <p style="color: var(--text-gray);">Easy access to assigned diet and workout plans, progress tracking,
+                    transformation photos, and direct communication with trainers.</p>
+            </div>
+        </div>
+    </div>
+    <div class="page-break"></div>
+
+    <!-- SECTION 2: USER ROLES -->
+    <div class="section">
+        <div class="section-header">
+            <span class="section-number">2</span>
+            <h1 class="section-title">User Roles Overview</h1>
+        </div>
+        <div class="section-content">
+            <p style="font-size: 1.1rem; color: var(--text-gray); margin-bottom: 2rem;">
+                The Fit With DY platform operates with three distinct user roles, each with specific permissions and
+                capabilities tailored to their needs.
+            </p>
+
+            <div class="role-grid">
+                <div class="role-card admin">
+                    <div class="role-icon">👑</div>
+                    <h3 class="role-title" style="color: var(--red-primary);">Admin</h3>
+                    <p class="role-desc">Controls the entire system. Manages all trainers and clients, handles
+                        subscriptions and payments, and configures platform settings.</p>
+                </div>
+                <div class="role-card trainer">
+                    <div class="role-icon">🏋️</div>
+                    <h3 class="role-title" style="color: var(--green-accent);">Trainer</h3>
+                    <p class="role-desc">Creates personalized diet and workout plans for assigned clients. Uses
+                        professional libraries and tracks client progress.</p>
+                </div>
+                <div class="role-card client">
+                    <div class="role-icon">💪</div>
+                    <h3 class="role-title" style="color: var(--blue-accent);">Client</h3>
+                    <p class="role-desc">Follows assigned diet and workout plans. Tracks their transformation journey
+                        with progress photos and metrics.</p>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <div class="info-box-title">💡 Role-Based Access</div>
+                <p style="color: var(--text-gray);">Each user only sees features relevant to their role. This ensures a
+                    clean, focused experience and maintains data privacy across the platform.</p>
+            </div>
+        </div>
+    </div>
+    <div class="page-break"></div>
+
+    <!-- SECTION 3: ADMIN PANEL -->
+    <div class="section">
+        <div class="section-header">
+            <span class="section-number">3</span>
+            <h1 class="section-title">Admin Panel Guide</h1>
+        </div>
+        <div class="section-content">
+            <p style="font-size: 1.1rem; color: var(--text-gray); margin-bottom: 2rem;">
+                The Admin Dashboard provides complete control over your fitness business. Here you can manage users,
+                monitor subscriptions, and handle payments.
+            </p>
+
+            <div class="screenshot-container">
+                <img src="admin_dashboard_1769762225017.png" alt="Admin Dashboard">
+                <p class="screenshot-caption">Admin Dashboard Overview — Stats, User Management, and Payment Control</p>
+            </div>
+
+            <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Admin Features:</h3>
+
+            <ul class="feature-list">
+                <li><strong>Dashboard Overview</strong> — View total trainers, clients, active subscriptions, and
+                    revenue at a glance</li>
+                <li><strong>Trainer Management</strong> — Add, view, and remove trainers from the platform</li>
+                <li><strong>Client Management</strong> — Monitor all clients across all trainers</li>
+                <li><strong>Subscription Control</strong> — See validity dates and manage user access</li>
+                <li><strong>Payment Approval</strong> — Review and approve pending payment submissions</li>
+                <li><strong>QR Code System</strong> — Configure the payment QR code for subscriptions</li>
+                <li><strong>Settings</strong> — Configure subscription duration, pricing, and platform settings</li>
+            </ul>
+
+            <div class="info-box warning">
+                <div class="info-box-title">⚠️ Admin Access</div>
+                <p style="color: var(--text-gray);">Admin credentials should be kept secure. The admin has full access
+                    to all data and user management capabilities.</p>
+            </div>
+        </div>
+    </div>
+    <div class="page-break"></div>
+
+    <!-- SECTION 4: TRAINER DASHBOARD -->
+    <div class="section">
+        <div class="section-header">
+            <span class="section-number">4</span>
+            <h1 class="section-title">Trainer Dashboard Guide</h1>
+        </div>
+        <div class="section-content">
+            <p style="font-size: 1.1rem; color: var(--text-gray); margin-bottom: 2rem;">
+                The Trainer Dashboard is your command center for managing clients and creating personalized fitness
+                plans.
+            </p>
+
+            <div class="screenshot-container">
+                <img src="trainer_dashboard_1769762249288.png" alt="Trainer Dashboard">
+                <p class="screenshot-caption">Trainer Dashboard — Client Management and Professional Tools</p>
+            </div>
+
+            <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Trainer Capabilities:</h3>
+
+            <div class="two-col">
+                <div class="card">
+                    <h4 class="card-title">👥 Client Management</h4>
+                    <ul class="feature-list">
+                        <li>Add new clients by email</li>
+                        <li>View client profiles and stats</li>
+                        <li>Track subscription validity</li>
+                        <li>Remove clients when needed</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4 class="card-title">📋 Plan Creation</h4>
+                    <ul class="feature-list">
+                        <li>Create personalized diet plans</li>
+                        <li>Design custom workout routines</li>
+                        <li>Use built-in food database</li>
+                        <li>Access exercise library</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="two-col">
+                <div class="card">
+                    <h4 class="card-title">📊 Progress Tracking</h4>
+                    <ul class="feature-list">
+                        <li>Update client weight</li>
+                        <li>Update body fat percentage</li>
+                        <li>View transformation history</li>
+                        <li>See progress photos</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4 class="card-title">📚 Professional Libraries</h4>
+                    <ul class="feature-list">
+                        <li>Food Library (500+ items)</li>
+                        <li>Workout Library (100+ exercises)</li>
+                        <li>Supplement Library (50+ items)</li>
+                        <li>Add custom entries</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-break"></div>
+
+    <!-- SECTION 5: CLIENT DASHBOARD -->
+    <div class="section">
+        <div class="section-header">
+            <span class="section-number">5</span>
+            <h1 class="section-title">Client Dashboard Guide</h1>
+        </div>
+        <div class="section-content">
+            <p style="font-size: 1.1rem; color: var(--text-gray); margin-bottom: 2rem;">
+                The Client Dashboard provides a clear, focused view of your fitness journey with easy access to your
+                assigned plans and progress tracking.
+            </p>
+
+            <div class="screenshot-container">
+                <img src="client_dashboard_1769762284050.png" alt="Client Dashboard">
+                <p class="screenshot-caption">Client Dashboard — Diet Plan, Workout Plan, and Transformation Progress
+                </p>
+            </div>
+
+            <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Client Features:</h3>
+
+            <ul class="feature-list">
+                <li><strong>Diet Plan View</strong> — See your complete daily meal plan with calorie and macro
+                    information</li>
+                <li><strong>Workout Plan View</strong> — Access your personalized workout routine with sets, reps, and
+                    instructions</li>
+                <li><strong>Transformation Progress</strong> — Track your weight and body fat percentage over time</li>
+                <li><strong>Progress Photos</strong> — Upload before/after photos to visualize your transformation</li>
+                <li><strong>Goal Tracking</strong> — Monitor your progress towards fitness goals</li>
+                <li><strong>Trainer Feedback</strong> — Communicate with your trainer about your progress</li>
+                <li><strong>Subscription Status</strong> — View your subscription validity and renewal date</li>
+            </ul>
+
+            <div class="info-box">
+                <div class="info-box-title">💡 Stay Updated</div>
+                <p style="color: var(--text-gray);">Your diet and workout plans are updated by your trainer. Check your
+                    dashboard regularly for the latest plans and instructions.</p>
+            </div>
+        </div>
+    </div>
+    <div class="page-break"></div>
+
+    <!-- SECTION 6: PAYMENT SYSTEM -->
+    <div class="section">
+        <div class="section-header">
+            <span class="section-number">6</span>
+            <h1 class="section-title">Payment & Subscription System</h1>
+        </div>
+        <div class="section-content">
+            <p style="font-size: 1.1rem; color: var(--text-gray); margin-bottom: 2rem;">
+                The platform uses a QR-based payment system for easy subscription management. Here's how the payment
+                flow works:
+            </p>
+
+            <div class="screenshot-container">
+                <img src="payment_system_1769762378250.png" alt="Payment System">
+                <p class="screenshot-caption">QR Payment Interface — Scan, Pay, and Submit Transaction ID</p>
+            </div>
+
+            <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Payment Process:</h3>
+
+            <div class="steps">
+                <div class="step">
+                    <h4 class="step-title">Subscription Expires</h4>
+                    <p class="step-desc">When a user's subscription validity ends, they are automatically redirected to
+                        the payment page.</p>
+                </div>
+                <div class="step">
+                    <h4 class="step-title">Scan QR Code</h4>
+                    <p class="step-desc">The user scans the displayed QR code using their preferred payment app (UPI,
+                        bank app, etc.).</p>
+                </div>
+                <div class="step">
+                    <h4 class="step-title">Complete Payment</h4>
+                    <p class="step-desc">User makes the payment for the subscription amount through their payment app.
+                    </p>
+                </div>
+                <div class="step">
+                    <h4 class="step-title">Enter Transaction ID</h4>
+                    <p class="step-desc">After payment, the user enters the transaction/reference ID in the provided
+                        field.</p>
+                </div>
+                <div class="step">
+                    <h4 class="step-title">Admin Approval</h4>
+                    <p class="step-desc">The admin receives the payment request and can verify and approve it from the
+                        admin panel.</p>
+                </div>
+                <div class="step">
+                    <h4 class="step-title">Account Reactivated</h4>
+                    <p class="step-desc">Once approved, the user's subscription is renewed and they regain full access
+                        to the platform.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-break"></div>
+
+    <!-- SECTION 7: LIBRARIES -->
+    <div class="section">
+        <div class="section-header">
+            <span class="section-number">7</span>
+            <h1 class="section-title">Libraries System</h1>
+        </div>
+        <div class="section-content">
+            <p style="font-size: 1.1rem; color: var(--text-gray); margin-bottom: 2rem;">
+                Trainers have access to three professional libraries that help them create comprehensive and accurate
+                plans quickly.
+            </p>
+
+            <div class="library-grid">
+                <div class="library-card food">
+                    <div class="library-icon">🥗</div>
+                    <h3 class="library-title">Food Library</h3>
+                    <p class="library-count">500+ Foods with Nutrition Data</p>
+                </div>
+                <div class="library-card workout">
+                    <div class="library-icon">🏋️</div>
+                    <h3 class="library-title">Workout Library</h3>
+                    <p class="library-count">100+ Exercises with Details</p>
+                </div>
+                <div class="library-card supplement">
+                    <div class="library-icon">💊</div>
+                    <h3 class="library-title">Supplement Library</h3>
+                    <p class="library-count">50+ Supplements with Usage Guide</p>
+                </div>
+            </div>
+
+            <div class="two-col" style="margin-top: 2rem;">
+                <div class="screenshot-container" style="margin: 0;">
+                    <img src="food_library_1769762314456.png" alt="Food Library">
+                    <p class="screenshot-caption">Food Library — Complete Nutrition Database</p>
+                </div>
+                <div class="screenshot-container" style="margin: 0;">
+                    <img src="workout_library_1769762342175.png" alt="Workout Library">
+                    <p class="screenshot-caption">Workout Library — Exercise Database</p>
+                </div>
+            </div>
+
+            <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">Library Features:</h3>
+
+            <ul class="feature-list">
+                <li><strong>Search & Filter</strong> — Quickly find foods, exercises, or supplements by name or category
+                </li>
+                <li><strong>Detailed Information</strong> — Each item includes comprehensive details (nutrition, muscle
+                    groups, dosage)</li>
+                <li><strong>Add to Plan</strong> — Easily add items from the library directly into client plans</li>
+                <li><strong>Custom Entries</strong> — Trainers can add their own custom foods, exercises, or supplements
+                </li>
+            </ul>
+
+            <div class="info-box warning">
+                <div class="info-box-title">⚠️ Supplement Disclaimer</div>
+                <p style="color: var(--text-gray);">The Supplement Library is for informational purposes only. Users
+                    should consult a healthcare professional before starting any new supplements, especially if they
+                    have medical conditions.</p>
+            </div>
+        </div>
+    </div>
+    <div class="page-break"></div>
+
+    <!-- SECTION 8: PROGRESS TRACKING -->
+    <div class="section">
+        <div class="section-header">
+            <span class="section-number">8</span>
+            <h1 class="section-title">Progress Tracking System</h1>
+        </div>
+        <div class="section-content">
+            <p style="font-size: 1.1rem; color: var(--text-gray); margin-bottom: 2rem;">
+                Track your fitness transformation with comprehensive progress monitoring tools.
+            </p>
+
+            <div class="card">
+                <h3 class="card-title">📊 What Gets Tracked</h3>
+                <div class="two-col" style="margin-top: 1rem;">
+                    <div>
+                        <h4 style="color: var(--green-accent); margin-bottom: 0.5rem;">Body Metrics</h4>
+                        <ul class="feature-list">
+                            <li>Weight (kg/lbs)</li>
+                            <li>Body Fat Percentage</li>
+                            <li>Measurement History</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--blue-accent); margin-bottom: 0.5rem;">Visual Progress</h4>
+                        <ul class="feature-list">
+                            <li>Before Photos</li>
+                            <li>After Photos</li>
+                            <li>Date-stamped Uploads</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin: 2rem 0 1rem; font-size: 1.3rem;">How Progress Tracking Works:</h3>
+
+            <div class="steps">
+                <div class="step">
+                    <h4 class="step-title">Trainer Records Data</h4>
+                    <p class="step-desc">The trainer updates the client's weight and body fat percentage during sessions
+                        or check-ins.</p>
+                </div>
+                <div class="step">
+                    <h4 class="step-title">Client Sees Progress</h4>
+                    <p class="step-desc">The client's dashboard displays a visual chart showing their transformation
+                        over time.</p>
+                </div>
+                <div class="step">
+                    <h4 class="step-title">Photo Documentation</h4>
+                    <p class="step-desc">Clients can upload progress photos that are stored securely and visible to
+                        their trainer.</p>
+                </div>
+                <div class="step">
+                    <h4 class="step-title">Historical Records</h4>
+                    <p class="step-desc">All progress data is saved, allowing both trainer and client to review the
+                        complete journey.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-break"></div>
+
+    <!-- SECTION 9: SECURITY -->
+    <div class="section">
+        <div class="section-header">
+            <span class="section-number">9</span>
+            <h1 class="section-title">Security & Access Control</h1>
+        </div>
+        <div class="section-content">
+            <p style="font-size: 1.1rem; color: var(--text-gray); margin-bottom: 2rem;">
+                The platform implements multiple layers of security to protect user data and ensure proper access
+                control.
+            </p>
+
+            <div class="card">
+                <h3 class="card-title">🔐 Security Features</h3>
+                <ul class="feature-list">
+                    <li><strong>Role-Based Access Control</strong> — Each user type (Admin, Trainer, Client) can only
+                        access features relevant to their role</li>
+                    <li><strong>Secure Authentication</strong> — Password-protected login with encrypted credentials
+                    </li>
+                    <li><strong>Expiry Lock System</strong> — Expired subscriptions automatically restrict platform
+                        access until renewed</li>
+                    <li><strong>Admin Approval Control</strong> — Critical actions like payment verification require
+                        admin authorization</li>
+                    <li><strong>Data Isolation</strong> — Trainers can only see their own clients; clients can only see
+                        their own data</li>
+                </ul>
+            </div>
+
+            <div class="role-grid" style="margin-top: 2rem;">
+                <div class="card" style="text-align: center;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🛡️</div>
+                    <h4 style="color: var(--red-primary);">Admin Access</h4>
+                    <p style="color: var(--text-gray); font-size: 0.9rem;">Full system control, all user data, payment
+                        management</p>
+                </div>
+                <div class="card" style="text-align: center;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">👁️</div>
+                    <h4 style="color: var(--green-accent);">Trainer Access</h4>
+                    <p style="color: var(--text-gray); font-size: 0.9rem;">Own clients only, create plans, view progress
+                    </p>
+                </div>
+                <div class="card" style="text-align: center;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">📱</div>
+                    <h4 style="color: var(--blue-accent);">Client Access</h4>
+                    <p style="color: var(--text-gray); font-size: 0.9rem;">Personal plans, own progress, photo uploads
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-break"></div>
+
+    <!-- SECTION 10: BENEFITS -->
+    <div class="section">
+        <div class="section-header">
+            <span class="section-number">10</span>
+            <h1 class="section-title">Benefits of the System</h1>
+        </div>
+        <div class="section-content">
+            <p style="font-size: 1.1rem; color: var(--text-gray); margin-bottom: 2rem;">
+                Fit With DY provides significant advantages for all user types in the fitness ecosystem.
+            </p>
+
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <h4>For Administrators</h4>
+                    <ul>
+                        <li>✓ Complete business control</li>
+                        <li>✓ Automated subscription tracking</li>
+                        <li>✓ Simplified payment management</li>
+                        <li>✓ User analytics at a glance</li>
+                        <li>✓ Scalable platform</li>
+                    </ul>
+                </div>
+                <div class="benefit-card">
+                    <h4>For Trainers</h4>
+                    <ul>
+                        <li>✓ Professional coaching tools</li>
+                        <li>✓ Faster plan creation</li>
+                        <li>✓ Comprehensive food/workout databases</li>
+                        <li>✓ Easy client management</li>
+                        <li>✓ Progress tracking visibility</li>
+                    </ul>
+                </div>
+                <div class="benefit-card">
+                    <h4>For Clients</h4>
+                    <ul>
+                        <li>✓ Clear fitness guidance</li>
+                        <li>✓ Personalized plans</li>
+                        <li>✓ Visual progress tracking</li>
+                        <li>✓ Easy-to-follow interface</li>
+                        <li>✓ Transformation documentation</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card"
+                style="text-align: center; margin-top: 2rem; background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), transparent);">
+                <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">Why Choose Fit With DY?</h3>
+                <p style="color: var(--text-gray); max-width: 600px; margin: 0 auto;">
+                    A complete digital ecosystem designed specifically for the fitness industry. From business
+                    management to client transformation — everything in one powerful platform.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="page-break"></div>
+
+    <!-- FINAL PAGE -->
+    <div class="final-page">
+        <div class="final-logo">FIT WITH DY</div>
+        <div class="final-tagline">Digital Fitness Evolution</div>
+
+        <div style="width: 100px; height: 2px; background: var(--red-primary); margin: 2rem 0;"></div>
+
+        <p style="color: var(--text-gray); max-width: 500px; text-align: center; line-height: 1.8;">
+            Transform your fitness business with the power of digital coaching. Connect trainers with clients, create
+            personalized plans, and track real transformations.
+        </p>
+
+        <div class="final-footer">
+            <p>© 2026 Fit With DY. All Rights Reserved.</p>
+            <p style="margin-top: 0.5rem;">Version 1.0 | User Manual</p>
+        </div>
+    </div>
+
+</body>
+
+</html>

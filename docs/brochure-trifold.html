@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fit With DY - Tri-Fold Brochure</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0a0a;
+            --red-primary: #dc2626;
+            --red-dark: #991b1b;
+            --text-white: #ffffff;
+            --text-gray: #9ca3af;
+            --border-subtle: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* A4 Landscape for Tri-Fold */
+        .brochure-page {
+            width: 297mm;
+            height: 210mm;
+            background: var(--bg-dark);
+            margin: 0 auto 30px;
+            display: flex;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-label {
+            text-align: center;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        /* Each panel is 99mm wide (297/3) */
+        .panel {
+            width: 99mm;
+            height: 210mm;
+            padding: 15mm 10mm;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-divider {
+            position: absolute;
+            top: 10mm;
+            bottom: 10mm;
+            width: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .panel-divider.first {
+            left: 99mm;
+        }
+
+        .panel-divider.second {
+            left: 198mm;
+        }
+
+        /* ============================================
+           OUTSIDE PANELS (Front of brochure)
+           Left: Back panel | Center: Inside flap | Right: Front Cover
+           ============================================ */
+
+        /* BACK PANEL (Outside Left) */
+        .back-panel {
+            background: linear-gradient(180deg, #0a0a0a 0%, #111 100%);
+        }
+
+        .back-panel h2 {
+            font-size: 18pt;
+            font-weight: 800;
+            color: var(--text-white);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+            margin-bottom: 8mm;
+        }
+
+        .join-steps {
+            flex: 1;
+        }
+
+        .join-step {
+            display: flex;
+            align-items: center;
+            gap: 5mm;
+            padding: 4mm 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .join-step:last-child {
+            border-bottom: none;
+        }
+
+        .step-number {
+            width: 10mm;
+            height: 10mm;
+            background: var(--red-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 12pt;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .step-text {
+            font-size: 10pt;
+            font-weight: 600;
+            color: var(--text-white);
+        }
+
+        .qr-section {
+            text-align: center;
+            margin-top: auto;
+            padding-top: 8mm;
+        }
+
+        .qr-box {
+            width: 25mm;
+            height: 25mm;
+            background: white;
+            margin: 0 auto 3mm;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8pt;
+            color: #666;
+        }
+
+        .qr-label {
+            font-size: 8pt;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .back-footer {
+            background: var(--red-primary);
+            margin: 8mm -10mm -15mm;
+            padding: 4mm;
+            text-align: center;
+        }
+
+        .back-footer p {
+            font-size: 8pt;
+            font-weight: 700;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* INSIDE FLAP (Outside Center - folds in) */
+        .flap-panel {
+            background: linear-gradient(180deg, #0f0f0f 0%, #0a0a0a 100%);
+        }
+
+        .flap-panel h2 {
+            font-size: 14pt;
+            font-weight: 800;
+            color: var(--text-white);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center;
+            margin-bottom: 6mm;
+            padding-bottom: 4mm;
+            border-bottom: 2px solid var(--red-primary);
+        }
+
+        .flap-content p {
+            font-size: 9pt;
+            color: var(--text-gray);
+            line-height: 1.6;
+            text-align: center;
+            margin-bottom: 6mm;
+        }
+
+        .feature-mini {
+            display: flex;
+            align-items: center;
+            gap: 3mm;
+            padding: 3mm 0;
+        }
+
+        .feature-mini-icon {
+            width: 6mm;
+            height: 6mm;
+            background: rgba(220, 38, 38, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--red-primary);
+            font-size: 8pt;
+        }
+
+        .feature-mini span {
+            font-size: 9pt;
+            color: var(--text-white);
+        }
+
+        /* FRONT COVER (Outside Right) */
+        .front-panel {
+            background: linear-gradient(180deg, #0a0a0a 0%, #1a0a0a 50%, #0a0a0a 100%);
+            text-align: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .front-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center, rgba(220, 38, 38, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .brand-logo {
+            font-size: 10pt;
+            font-weight: 800;
+            color: var(--red-primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15mm;
+        }
+
+        .front-title {
+            font-size: 22pt;
+            font-weight: 900;
+            color: var(--text-white);
+            line-height: 1.2;
+            text-transform: uppercase;
+            margin-bottom: 5mm;
+        }
+
+        .front-subtitle {
+            font-size: 10pt;
+            color: var(--text-gray);
+            font-weight: 500;
+            font-style: italic;
+            margin-bottom: 15mm;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--red-primary);
+            color: white;
+            padding: 4mm 8mm;
+            font-size: 9pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 2mm;
+        }
+
+        .gym-icon {
+            font-size: 40pt;
+            margin-bottom: 10mm;
+            opacity: 0.3;
+        }
+
+        /* ============================================
+           INSIDE PANELS (Back of brochure)
+           When opened: Left | Center | Right
+           ============================================ */
+
+        /* WHY CHOOSE US (Inside Left) */
+        .why-panel {
+            background: linear-gradient(180deg, #0a0a0a 0%, #0f0f0f 100%);
+        }
+
+        .why-panel h2 {
+            font-size: 14pt;
+            font-weight: 800;
+            color: var(--text-white);
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 6mm;
+            padding-bottom: 4mm;
+            border-bottom: 2px solid var(--red-primary);
+        }
+
+        .why-list {
+            list-style: none;
+        }
+
+        .why-list li {
+            padding: 3mm 0;
+            padding-left: 6mm;
+            position: relative;
+            font-size: 9pt;
+            color: var(--text-white);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .why-list li:last-child {
+            border-bottom: none;
+        }
+
+        .why-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--red-primary);
+            font-weight: 700;
+        }
+
+        /* WHAT YOU GET (Inside Center) */
+        .get-panel {
+            background: linear-gradient(180deg, #0f0f0f 0%, #0a0a0a 100%);
+        }
+
+        .get-panel h2 {
+            font-size: 14pt;
+            font-weight: 800;
+            color: var(--text-white);
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 6mm;
+            padding-bottom: 4mm;
+            border-bottom: 2px solid var(--red-primary);
+        }
+
+        .get-item {
+            display: flex;
+            align-items: center;
+            gap: 4mm;
+            padding: 4mm 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .get-item:last-child {
+            border-bottom: none;
+        }
+
+        .get-icon {
+            width: 10mm;
+            height: 10mm;
+            background: rgba(220, 38, 38, 0.15);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: 2mm;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12pt;
+            flex-shrink: 0;
+        }
+
+        .get-text {
+            font-size: 9pt;
+            font-weight: 600;
+            color: var(--text-white);
+        }
+
+        /* TRANSFORMATION SYSTEM (Inside Right) */
+        .transform-panel {
+            background: linear-gradient(180deg, #0a0a0a 0%, #0f0f0f 100%);
+        }
+
+        .transform-panel h2 {
+            font-size: 14pt;
+            font-weight: 800;
+            color: var(--text-white);
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 6mm;
+            padding-bottom: 4mm;
+            border-bottom: 2px solid var(--red-primary);
+        }
+
+        .flow-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 3mm;
+        }
+
+        .flow-circle {
+            width: 12mm;
+            height: 12mm;
+            background: var(--red-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 10pt;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .flow-line {
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(90deg, var(--red-primary), rgba(220, 38, 38, 0.3));
+            margin: 0 2mm;
+        }
+
+        .flow-label {
+            font-size: 8pt;
+            font-weight: 600;
+            color: var(--text-white);
+            text-align: center;
+            width: 25mm;
+        }
+
+        .flow-step-vertical {
+            text-align: center;
+            padding: 3mm 0;
+            position: relative;
+        }
+
+        .flow-step-vertical::after {
+            content: '↓';
+            display: block;
+            color: var(--red-primary);
+            font-size: 14pt;
+            margin-top: 2mm;
+        }
+
+        .flow-step-vertical:last-child::after {
+            content: '★';
+        }
+
+        .flow-step-vertical .flow-circle {
+            margin: 0 auto 2mm;
+        }
+
+        /* Bottom tagline for inside panels */
+        .inside-footer {
+            margin-top: auto;
+            text-align: center;
+            padding-top: 5mm;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .inside-footer p {
+            font-size: 7pt;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .page-label {
+                display: none;
+            }
+
+            .brochure-page {
+                box-shadow: none;
+                margin: 0;
+                page-break-after: always;
+            }
+        }
+
+        @page {
+            size: A4 landscape;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- PAGE 1: OUTSIDE (When flat, before folding) -->
+    <p class="page-label">Outside Panels (Print Side 1) — Back | Flap | Front Cover</p>
+    <div class="brochure-page">
+        <div class="panel-divider first"></div>
+        <div class="panel-divider second"></div>
+
+        <!-- BACK PANEL (Left when flat, shows when brochure is flipped) -->
+        <div class="panel back-panel">
+            <h2>How to Join</h2>
+            <div class="join-steps">
+                <div class="join-step">
+                    <div class="step-number">1</div>
+                    <div class="step-text">Register on the Platform</div>
+                </div>
+                <div class="join-step">
+                    <div class="step-number">2</div>
+                    <div class="step-text">Complete Payment</div>
+                </div>
+                <div class="join-step">
+                    <div class="step-number">3</div>
+                    <div class="step-text">Fill Your Questionnaire</div>
+                </div>
+                <div class="join-step">
+                    <div class="step-number">4</div>
+                    <div class="step-text">Trainer Creates Your Plan</div>
+                </div>
+                <div class="join-step">
+                    <div class="step-number">5</div>
+                    <div class="step-text">Start Your Training Journey</div>
+                </div>
+            </div>
+            <div class="qr-section">
+                <div class="qr-box">QR CODE</div>
+                <p class="qr-label">Scan to Join Now</p>
+            </div>
+            <div class="back-footer">
+                <p>Fit With DY – Evolution Performance</p>
+            </div>
+        </div>
+
+        <!-- INSIDE FLAP (Center - folds inside, first thing you see when opening) -->
+        <div class="panel flap-panel">
+            <h2>Your Journey Starts Here</h2>
+            <p class="flap-content">Transform your body with science-backed training and nutrition. Our certified
+                trainers design personalized programs tailored to your goals.</p>
+
+            <div class="feature-mini">
+                <div class="feature-mini-icon">✓</div>
+                <span>Certified Expert Trainers</span>
+            </div>
+            <div class="feature-mini">
+                <div class="feature-mini-icon">✓</div>
+                <span>Personalized Approach</span>
+            </div>
+            <div class="feature-mini">
+                <div class="feature-mini-icon">✓</div>
+                <span>Scientific Methodology</span>
+            </div>
+            <div class="feature-mini">
+                <div class="feature-mini-icon">✓</div>
+                <span>Proven Results</span>
+            </div>
+            <div class="feature-mini">
+                <div class="feature-mini-icon">✓</div>
+                <span>Ongoing Support</span>
+            </div>
+
+            <div class="inside-footer">
+                <p>www.fitwithdy.com</p>
+            </div>
+        </div>
+
+        <!-- FRONT COVER (Right - visible when brochure is closed) -->
+        <div class="panel front-panel">
+            <div class="gym-icon">🏋️</div>
+            <div class="brand-logo">Fit With DY</div>
+            <h1 class="front-title">Real Transformation.<br>Real Results.</h1>
+            <p class="front-subtitle">Elite coaching. Discipline. Results.</p>
+            <div class="cta-button">Start Your Transformation</div>
+        </div>
+    </div>
+
+    <!-- PAGE 2: INSIDE (When opened fully) -->
+    <p class="page-label">Inside Panels (Print Side 2) — Why Choose | What You Get | Transformation</p>
+    <div class="brochure-page">
+        <div class="panel-divider first"></div>
+        <div class="panel-divider second"></div>
+
+        <!-- WHY CHOOSE US (Inside Left) -->
+        <div class="panel why-panel">
+            <h2>Why Choose<br>Fit With DY?</h2>
+            <ul class="why-list">
+                <li>Personalized Diet Plans designed for your body type and goals</li>
+                <li>Custom Workout Programs created by certified trainers</li>
+                <li>Real-Time Progress Tracking with metrics and analytics</li>
+                <li>Transformation Monitoring through photo documentation</li>
+                <li>Direct Trainer Support for guidance and motivation</li>
+                <li>Scientific Nutrition System backed by research</li>
+                <li>Flexible Subscription Plans to fit your schedule</li>
+                <li>Digital Platform Access from anywhere, anytime</li>
+            </ul>
+            <div class="inside-footer">
+                <p>Your Goals. Our Expertise.</p>
+            </div>
+        </div>
+
+        <!-- WHAT YOU GET (Inside Center) -->
+        <div class="panel get-panel">
+            <h2>What You Get</h2>
+            <div class="get-item">
+                <div class="get-icon">🍽️</div>
+                <div class="get-text">Complete Diet Plan Access</div>
+            </div>
+            <div class="get-item">
+                <div class="get-icon">💪</div>
+                <div class="get-text">Custom Workout Program</div>
+            </div>
+            <div class="get-item">
+                <div class="get-icon">📊</div>
+                <div class="get-text">Progress Dashboard</div>
+            </div>
+            <div class="get-item">
+                <div class="get-icon">📷</div>
+                <div class="get-text">Photo Transformation Tracking</div>
+            </div>
+            <div class="get-item">
+                <div class="get-icon">💬</div>
+                <div class="get-text">Direct Trainer Feedback</div>
+            </div>
+            <div class="get-item">
+                <div class="get-icon">⭐</div>
+                <div class="get-text">Subscription-Based Coaching</div>
+            </div>
+            <div class="get-item">
+                <div class="get-icon">💊</div>
+                <div class="get-text">Supplement Guidance</div>
+            </div>
+            <div class="get-item">
+                <div class="get-icon">📱</div>
+                <div class="get-text">24/7 Platform Access</div>
+            </div>
+            <div class="inside-footer">
+                <p>Everything You Need to Transform</p>
+            </div>
+        </div>
+
+        <!-- TRANSFORMATION SYSTEM (Inside Right) -->
+        <div class="panel transform-panel">
+            <h2>Transformation<br>System</h2>
+            <div class="flow-container">
+                <div class="flow-step-vertical">
+                    <div class="flow-circle">1</div>
+                    <div class="flow-label">JOIN THE PLATFORM</div>
+                </div>
+                <div class="flow-step-vertical">
+                    <div class="flow-circle">2</div>
+                    <div class="flow-label">COMPLETE QUESTIONNAIRE</div>
+                </div>
+                <div class="flow-step-vertical">
+                    <div class="flow-circle">3</div>
+                    <div class="flow-label">RECEIVE CUSTOM PLAN</div>
+                </div>
+                <div class="flow-step-vertical">
+                    <div class="flow-circle">4</div>
+                    <div class="flow-label">FOLLOW THE SYSTEM</div>
+                </div>
+                <div class="flow-step-vertical">
+                    <div class="flow-circle">5</div>
+                    <div class="flow-label">TRACK YOUR PROGRESS</div>
+                </div>
+                <div class="flow-step-vertical" style="padding-top: 5mm;">
+                    <div class="flow-circle"
+                        style="background: linear-gradient(135deg, #dc2626, #991b1b); width: 15mm; height: 15mm; font-size: 12pt;">
+                        ★</div>
+                    <div class="flow-label" style="font-size: 10pt; font-weight: 800; color: #dc2626;">ACHIEVE RESULTS
+                    </div>
+                </div>
+            </div>
+            <div class="inside-footer">
+                <p>Your Transformation Awaits</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

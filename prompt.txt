@@ -5,7 +5,7 @@ This platform allows trainers to manage clients, assign diet & workout plans, tr
 
 User Roles:
 1. Admin (Main Owner)
-2. Trainer (Paid user – ₹500/month)
+2. Trainer (Paid user – ₹659/month)
 3. Client (Paid user – Monthly paid access)
 
 ========================
@@ -16,14 +16,14 @@ ADMIN PANEL FEATURES
 - Upload QR code for payments
 - View all trainers & clients
 - View payment history & expiry
-- Set trainer subscription price (₹500/month)
+- Set trainer subscription price (₹659/month)
 - Full system control
 
 ========================
 TRAINER PANEL FEATURES
 ========================
 - Trainer registration & login
-- ₹500/month subscription via QR code
+- ₹659/month subscription via QR code
 - Access only after admin approval
 - Add & manage clients
 - Create & assign diet plans:

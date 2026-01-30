@@ -10,7 +10,7 @@ async function main() {
     // Admin
     const admin = await prisma.user.upsert({
         where: { email: 'admin@example.com' },
-        update: {},
+        update: { role: 'ADMIN', isActive: true },
         create: {
             name: 'Admin User',
             email: 'admin@example.com',
@@ -20,46 +20,61 @@ async function main() {
         },
     });
 
-    // Trainer
+    // Trainer - with active subscription
+    const trainerExpiry = new Date();
+    trainerExpiry.setDate(trainerExpiry.getDate() + 30); // 30 days from now
+
     const trainer = await prisma.user.upsert({
         where: { email: 'trainer@example.com' },
-        update: {},
+        update: { role: 'TRAINER', isActive: true, subscriptionExpiresAt: trainerExpiry },
         create: {
             name: 'Trainer User',
             email: 'trainer@example.com',
             password,
             role: 'TRAINER',
             isActive: true,
-            trainerProfile: {
-                create: {
-                    specialization: 'General Fitness',
-                    bio: 'Experienced trainer ready to help you.',
-                },
-            },
+            subscriptionExpiresAt: trainerExpiry,
+        },
+    });
+
+    // Ensure trainer profile exists
+    await prisma.trainerProfile.upsert({
+        where: { userId: trainer.id },
+        update: {},
+        create: {
+            userId: trainer.id,
+            specialization: 'General Fitness',
+            bio: 'Experienced trainer ready to help you.',
         },
     });
 
     // Client
     const client = await prisma.user.upsert({
         where: { email: 'client@example.com' },
-        update: {},
+        update: { role: 'CLIENT', isActive: true },
         create: {
             name: 'Client User',
             email: 'client@example.com',
             password,
             role: 'CLIENT',
             isActive: true,
-            clientProfile: {
-                create: {
-                    currentWeight: 75.0,
-                    height: 175.0,
-                    dietaryRestrictions: 'None'
-                },
-            },
         },
     });
 
-    console.log({ admin, trainer, client });
+    // Ensure client profile exists AND is assigned to trainer
+    await prisma.clientProfile.upsert({
+        where: { userId: client.id },
+        update: { trainerId: trainer.id }, // Always update trainerId
+        create: {
+            userId: client.id,
+            currentWeight: 75.0,
+            height: 175.0,
+            dietaryRestrictions: 'None',
+            trainerId: trainer.id,
+        },
+    });
+
+    console.log('Seed complete:', { admin: admin.email, trainer: trainer.email, client: client.email });
 }
 
 main()

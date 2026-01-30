@@ -1,49 +1,85 @@
-const fs = require('fs');
-const path = require('path');
+const prisma = require('../utils/prismaClient');
 
-const settingsPath = path.join(__dirname, '../data/settings.json');
+/**
+ * @desc    Get All Settings (Prices, Duration, QR)
+ * @route   GET /api/settings
+ * @access  Private
+ */
+exports.getSettings = async (req, res) => {
+    try {
+        let settings = await prisma.systemSetting.findFirst();
 
-// Helper to read settings
-const readSettings = () => {
-    if (!fs.existsSync(settingsPath)) {
-        // Ensure directory exists
-        const dir = path.dirname(settingsPath);
-        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-        // Create default
-        const defaultSettings = { qrCodeUrl: '' };
-        fs.writeFileSync(settingsPath, JSON.stringify(defaultSettings));
-        return defaultSettings;
+        // If no settings exist, create default
+        if (!settings) {
+            settings = await prisma.systemSetting.create({
+                data: {
+                    id: 'global',
+                    clientPrice: 6000,
+                    trainerPrice: 659,
+                    subscriptionDuration: 30,
+                    qrCode: '/payment-qr.jpg'
+                }
+            });
+        }
+
+        res.json(settings);
+    } catch (error) {
+        console.error('Error fetching settings:', error);
+        res.status(500).json({ message: 'Error fetching settings' });
     }
-    return JSON.parse(fs.readFileSync(settingsPath));
 };
 
-// Helper to write settings
-const writeSettings = (data) => {
-    fs.writeFileSync(settingsPath, JSON.stringify(data, null, 2));
+/**
+ * @desc    Update All Settings
+ * @route   PUT /api/settings
+ * @access  Private/Admin
+ */
+exports.updateSettings = async (req, res) => {
+    const { clientPrice, trainerPrice, subscriptionDuration, qrCode } = req.body;
+
+    try {
+        const updateData = {};
+        if (clientPrice !== undefined) updateData.clientPrice = parseFloat(clientPrice);
+        if (trainerPrice !== undefined) updateData.trainerPrice = parseFloat(trainerPrice);
+        if (subscriptionDuration !== undefined) updateData.subscriptionDuration = parseInt(subscriptionDuration);
+        if (qrCode !== undefined) updateData.qrCode = qrCode;
+
+        const settings = await prisma.systemSetting.upsert({
+            where: { id: 'global' },
+            update: updateData,
+            create: {
+                id: 'global',
+                ...updateData
+            }
+        });
+
+        res.json({ message: 'Settings updated successfully', settings });
+    } catch (error) {
+        console.error('Error updating settings:', error);
+        res.status(500).json({ message: 'Error updating settings' });
+    }
 };
 
+// Legacy support if needed for current frontend calls (though better to update frontend)
 exports.getQRCode = async (req, res) => {
     try {
-        const settings = readSettings();
-        res.json({ qrCodeUrl: settings.qrCodeUrl });
+        const settings = await prisma.systemSetting.findFirst() || { qrCode: '' };
+        res.json({ qrCodeUrl: settings.qrCode });
     } catch (error) {
-        res.status(500).json({ message: 'Error fetching QR code' });
+        res.status(500).json({ message: 'Error' });
     }
 };
 
 exports.updateQRCode = async (req, res) => {
     try {
-        const { qrCodeUrl } = req.body; // Expecting a URL string (or Base64)
-        if (!qrCodeUrl) {
-            return res.status(400).json({ message: 'QR Code URL is required' });
-        }
-
-        const settings = readSettings();
-        settings.qrCodeUrl = qrCodeUrl;
-        writeSettings(settings);
-
-        res.json({ message: 'QR Code updated successfully', qrCodeUrl });
+        const { qrCodeUrl } = req.body;
+        const settings = await prisma.systemSetting.upsert({
+            where: { id: 'global' },
+            update: { qrCode: qrCodeUrl },
+            create: { id: 'global', qrCode: qrCodeUrl }
+        });
+        res.json({ message: 'Success', qrCodeUrl: settings.qrCode });
     } catch (error) {
-        res.status(500).json({ message: 'Error updating QR code' });
+        res.status(500).json({ message: 'Error' });
     }
 };

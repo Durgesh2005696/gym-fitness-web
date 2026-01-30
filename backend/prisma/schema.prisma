@@ -10,17 +10,26 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-
 model User {
   id                    String    @id @default(uuid())
   name                  String
   email                 String    @unique
   password              String
-  role                  String      @default("CLIENT")
+  role                  String    @default("CLIENT") // ADMIN, TRAINER, CLIENT
+  
+  // === ACCOUNT STATUS ===
+  // TRAINER: PENDING | PAYMENT_SUBMITTED | ACTIVE | REJECTED | SUSPENDED
+  // CLIENT: Uses isActive + clientProfile.activationStatus
+  // ADMIN: Always ACTIVE
+  accountStatus         String    @default("PENDING")
+  
+  // Legacy (kept for backward compatibility)
   isActive              Boolean   @default(false)
   subscriptionExpiresAt DateTime?
-  paymentQrCode         String?   // URL/Base64 of the QR Code
+  
+  // Trainer-specific: Their QR code for client payments
+  paymentQrCode         String?
+  
   loginToken            String?   // For single device login restriction
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
@@ -28,7 +37,12 @@ model User {
   // Relations
   trainerProfile TrainerProfile?
   clientProfile  ClientProfile?
-  payments       Payment[]
+  
+  // Payments MADE by this user (legacy relation name kept for compatibility)
+  payments       Payment[]       @relation("PaymentPayer")
+  
+  // Payments RECEIVED by this user (trainers receive from clients)
+  paymentsReceived Payment[]     @relation("PaymentReceiver")
   
   // For Trainer: Clients managed by this trainer
   managedClients ClientProfile[] @relation("TrainerClients")
@@ -47,10 +61,23 @@ model ClientProfile {
   userId              String @unique
   user                User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   
+  // === CLIENT ACTIVATION STATUS ===
+  // REGISTERED: Just signed up, no trainer
+  // UNASSIGNED: Trainer added client, awaiting payment
+  // PENDING_PAYMENT: Payment submitted, awaiting trainer approval
+  // ACTIVE: Payment approved, full access
+  activationStatus    String  @default("REGISTERED")
+  
   // Questionnaire Data
   age                 Int?
   height              Float?
   currentWeight       Float?
+  
+  // Live Body Stats (Synced with Trainer)
+  pastWeight          Float?
+  targetWeight        Float?
+  bodyFat             Float?
+  lastBodyStatsUpdate DateTime?
   currentWorkout      String?
   currentDiet         String?
   injuries            String?
@@ -71,6 +98,12 @@ model ClientProfile {
   
   plans Plan[]
   logs  Log[]
+  
+  // Progress Tracking
+  progressRecords  ClientProgress[]
+  photos           ProgressPhoto[]
+  activities       DailyActivity[]
+  feedbacks        DailyFeedback[]
 }
 
 model Plan {
@@ -94,12 +127,158 @@ model Log {
 }
 
 model Payment {
-  id            String        @id @default(uuid())
+  id            String   @id @default(uuid())
+  
+  // Who is paying (legacy: userId kept as alias)
   userId        String
-  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User     @relation("PaymentPayer", fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Who receives payment (null = Admin/Platform, or Trainer ID for client payments)
+  receiverId    String?
+  receiver      User?    @relation("PaymentReceiver", fields: [receiverId], references: [id])
+  
+  // Payment Type
+  // TRAINER_SUBSCRIPTION: Trainer paying Admin
+  // CLIENT_ACTIVATION: Client paying Trainer
+  // RENEWAL: Any renewal payment
+  paymentType   String   @default("SUBSCRIPTION")
+  
   amount        Float
   screenshotUrl String?
   transactionId String?
-  status        String @default("PENDING") // PENDING, APPROVED, REJECTED
-  createdAt     DateTime      @default(now())
+  
+  status        String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Food {
+  id               String   @id @default(uuid())
+  foodName         String
+  category         String   // Protein, Carb, Fat, Fruit, Vegetable, Dairy, Nuts, Seeds, Grains, Snack
+  
+  // Macros per 100g
+  caloriesPer100g  Float
+  proteinPer100g   Float
+  carbsPer100g     Float
+  fatPer100g       Float
+  fiberPer100g     Float    @default(0)
+  
+  // Micros per 100g (Optional)
+  calcium          Float    @default(0) // mg
+  iron             Float    @default(0) // mg
+  magnesium        Float    @default(0) // mg
+  potassium        Float    @default(0) // mg
+  sodium           Float    @default(0) // mg
+  zinc             Float    @default(0) // mg
+  vitaminA         Float    @default(0) // IU/mcg
+  vitaminB6        Float    @default(0) // mg
+  vitaminB12       Float    @default(0) // mcg
+  vitaminC         Float    @default(0) // mg
+  vitaminD         Float    @default(0) // IU
+  vitaminE         Float    @default(0) // mg
+
+  vegType          String   @default("Veg") // Veg / Non-Veg
+  createdByTrainer String?  // Null if system default
+  createdAt        DateTime @default(now())
+}
+
+model Exercise {
+  id                    String   @id @default(uuid())
+  name                  String
+  muscleGroup           String
+  category              String
+  equipment             String
+  difficulty            String
+  instructions          String?
+  setsDefault           String?
+  repsDefault           String?
+  caloriesBurnEstimate  Int?
+
+  createdByTrainer      String?
+  createdAt             DateTime @default(now())
+}
+
+model Supplement {
+  id              String   @id @default(uuid())
+  name            String
+  category        String
+  mainUse         String?
+  benefits        String?
+  whoShouldUse    String?
+  bestTime        String?
+  notes           String?
+
+  createdByTrainer String?
+  createdAt       DateTime @default(now())
+}
+
+
+
+// ============================================
+// PROGRESS TRACKING MODELS
+// ============================================
+
+model ClientProgress {
+  id              String   @id @default(uuid())
+  clientProfileId String
+  client          ClientProfile @relation(fields: [clientProfileId], references: [id], onDelete: Cascade)
+  
+  weight          Float?
+  bodyFat         Float?
+  chest           Float?
+  waist           Float?
+  hips            Float?
+  arms            Float?
+  thighs          Float?
+  
+  trainerNotes    String?
+  recordedAt      DateTime @default(now())
+}
+
+model ProgressPhoto {
+  id              String   @id @default(uuid())
+  clientProfileId String
+  client          ClientProfile @relation(fields: [clientProfileId], references: [id], onDelete: Cascade)
+  
+  photoUrl        String
+  photoType       String   // FRONT, SIDE, BACK
+  trainerComment  String?
+  uploadedAt      DateTime @default(now())
+}
+
+model DailyActivity {
+  id              String   @id @default(uuid())
+  clientProfileId String
+  client          ClientProfile @relation(fields: [clientProfileId], references: [id], onDelete: Cascade)
+  
+  waterIntake     Float    @default(0)
+  workoutCompleted Boolean @default(false)
+  mealsCompleted  Int      @default(0)
+  date            DateTime @default(now())
+}
+
+model DailyFeedback {
+  id              String   @id @default(uuid())
+  clientProfileId String
+  client          ClientProfile @relation(fields: [clientProfileId], references: [id], onDelete: Cascade)
+  
+  energyLevel     Int
+  sleepQuality    Int
+  motivation      Int
+  soreness        Int
+  notes           String?
+  
+  trainerReply    String?
+  submittedAt     DateTime @default(now())
+}
+
+model SystemSetting {
+  id                   String   @id @default("global")
+  clientPrice          Float    @default(6000)
+  trainerPrice         Float    @default(659)
+  subscriptionDuration Int      @default(30)
+  qrCode               String?  // Admin's QR Code for trainer payments
+  updatedAt            DateTime @updatedAt
 }

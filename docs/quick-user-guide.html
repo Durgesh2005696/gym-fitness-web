@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fit With DY - Quick User Guide</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.5;
+            color: #000;
+            background: #fff;
+            padding: 40px;
+            max-width: 210mm;
+            margin: 0 auto;
+        }
+
+        /* Title Section */
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            font-size: 20pt;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .header .subtitle {
+            font-size: 10pt;
+            font-weight: 500;
+            color: #333;
+        }
+
+        /* Section Styles */
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 12pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #000;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+
+        .section-content {
+            padding-left: 5px;
+        }
+
+        /* About Box */
+        .about-box {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+
+        th,
+        td {
+            border: 1px solid #000;
+            padding: 8px 10px;
+            text-align: left;
+            font-size: 10pt;
+        }
+
+        th {
+            background: #e5e5e5;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 9pt;
+        }
+
+        /* Feature Lists */
+        .feature-list {
+            list-style: none;
+            columns: 2;
+            column-gap: 30px;
+        }
+
+        .feature-list li {
+            padding: 4px 0;
+            padding-left: 18px;
+            position: relative;
+            font-size: 10pt;
+            break-inside: avoid;
+        }
+
+        .feature-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            font-weight: 700;
+        }
+
+        /* Single Column List */
+        .single-col {
+            columns: 1;
+        }
+
+        /* Flow Box */
+        .flow-box {
+            background: #f9f9f9;
+            border: 1px solid #ccc;
+            padding: 12px 15px;
+            text-align: center;
+            font-size: 11pt;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .flow-arrow {
+            color: #666;
+            margin: 0 5px;
+        }
+
+        /* Rule Box */
+        .rule-box {
+            border: 2px solid #000;
+            padding: 10px 15px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 10pt;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 2px solid #000;
+            text-align: center;
+        }
+
+        .footer p {
+            font-size: 11pt;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .footer .version {
+            font-size: 8pt;
+            color: #666;
+            margin-top: 5px;
+            font-weight: 400;
+        }
+
+        /* Two Column Layout */
+        .two-col {
+            display: flex;
+            gap: 20px;
+        }
+
+        .two-col .col {
+            flex: 1;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                padding: 20px;
+                font-size: 10pt;
+            }
+
+            .section {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <div class="header">
+        <h1>FIT WITH DY</h1>
+        <p class="subtitle">QUICK USER GUIDE</p>
+    </div>
+
+    <!-- ABOUT SYSTEM -->
+    <div class="about-box">
+        <strong>About the Platform:</strong> Fit With DY is a digital fitness coaching system that connects trainers
+        with clients. Trainers create personalized diet and workout plans, track client progress, and manage their
+        coaching business — all in one platform.
+    </div>
+
+    <!-- USER ROLES TABLE -->
+    <div class="section">
+        <h2 class="section-title">User Roles</h2>
+        <table>
+            <tr>
+                <th style="width: 20%;">Role</th>
+                <th>Responsibility</th>
+            </tr>
+            <tr>
+                <td><strong>Admin</strong></td>
+                <td>Controls entire system — manages trainers, clients, payments, and subscriptions</td>
+            </tr>
+            <tr>
+                <td><strong>Trainer</strong></td>
+                <td>Creates diet & workout plans for clients, tracks their progress</td>
+            </tr>
+            <tr>
+                <td><strong>Client</strong></td>
+                <td>Follows assigned plans, uploads progress photos, tracks transformation</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- TWO COLUMN: CLIENT & TRAINER FEATURES -->
+    <div class="two-col">
+        <!-- CLIENT FEATURES -->
+        <div class="col section">
+            <h2 class="section-title">Client Features</h2>
+            <ul class="feature-list single-col">
+                <li>View assigned diet plan</li>
+                <li>View assigned workout plan</li>
+                <li>Upload progress photos</li>
+                <li>Track weight & body fat %</li>
+                <li>Send feedback to trainer</li>
+                <li>Renew subscription when expired</li>
+            </ul>
+        </div>
+
+        <!-- TRAINER FEATURES -->
+        <div class="col section">
+            <h2 class="section-title">Trainer Features</h2>
+            <ul class="feature-list single-col">
+                <li>Add clients via email</li>
+                <li>Create personalized diet plans</li>
+                <li>Create custom workout plans</li>
+                <li>Update client weight & body fat</li>
+                <li>Use Food Library (500+ items)</li>
+                <li>Use Workout Library (100+ exercises)</li>
+                <li>Use Supplement Library (50+ items)</li>
+                <li>Monitor client transformation</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ADMIN FEATURES -->
+    <div class="section">
+        <h2 class="section-title">Admin Features</h2>
+        <ul class="feature-list">
+            <li>Manage all trainers</li>
+            <li>Manage all clients</li>
+            <li>Approve payment requests</li>
+            <li>Control subscription validity</li>
+            <li>Configure QR payment code</li>
+            <li>Set subscription pricing</li>
+        </ul>
+    </div>
+
+    <!-- PAYMENT FLOW -->
+    <div class="section">
+        <h2 class="section-title">Payment Flow</h2>
+        <div class="flow-box">
+            <strong>Scan QR</strong>
+            <span class="flow-arrow">→</span>
+            <strong>Make Payment</strong>
+            <span class="flow-arrow">→</span>
+            <strong>Enter Transaction ID</strong>
+            <span class="flow-arrow">→</span>
+            <strong>Admin Approves</strong>
+            <span class="flow-arrow">→</span>
+            <strong>Account Activated</strong>
+        </div>
+    </div>
+
+    <!-- SUBSCRIPTION RULE -->
+    <div class="section">
+        <h2 class="section-title">Subscription Rule</h2>
+        <div class="rule-box">
+            ⚠️ If subscription validity expires → Platform access is blocked → Renewal required to continue
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <p>FIT WITH DY — Your Digital Fitness Partner</p>
+        <p class="version">Version 1.0 | © 2026</p>
+    </div>
+
+</body>
+
+</html>

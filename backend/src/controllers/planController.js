@@ -4,22 +4,43 @@ exports.createPlan = async (req, res) => {
     const { clientId, type, data, validUntil } = req.body;
     try {
         const clientProfile = await prisma.clientProfile.findUnique({
-            where: { userId: clientId } // Assuming we pass userId for convenience, we need clientProfileId. 
-            // Let's find client profile first
+            where: { userId: clientId }
         });
 
         if (!clientProfile) {
             return res.status(404).json({ message: "Client profile not found" });
         }
 
-        const plan = await prisma.plan.create({
-            data: {
+        // Find existing plan of the same type for this client
+        const existingPlan = await prisma.plan.findFirst({
+            where: {
                 clientProfileId: clientProfile.id,
-                type,
-                data: JSON.stringify(data), // Store as string if JSON
-                validUntil: validUntil ? new Date(validUntil) : null
+                type: type
             }
         });
+
+        let plan;
+        if (existingPlan) {
+            // Update existing plan
+            plan = await prisma.plan.update({
+                where: { id: existingPlan.id },
+                data: {
+                    data: (typeof data === 'string' ? data : JSON.stringify(data)),
+                    validUntil: validUntil ? new Date(validUntil) : null
+                }
+            });
+        } else {
+            // Create new plan
+            plan = await prisma.plan.create({
+                data: {
+                    clientProfileId: clientProfile.id,
+                    type,
+                    data: (typeof data === 'string' ? data : JSON.stringify(data)),
+                    validUntil: validUntil ? new Date(validUntil) : null
+                }
+            });
+        }
+
         res.status(201).json(plan);
     } catch (error) {
         res.status(500).json({ message: error.message });

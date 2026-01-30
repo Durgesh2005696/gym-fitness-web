@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
 import Renewal from './pages/Renewal';
 import Questionnaire from './pages/Questionnaire';
@@ -7,12 +8,17 @@ import PlanInProgress from './pages/PlanInProgress';
 import AdminDashboard from './pages/AdminDashboard';
 import TrainerDashboard from './pages/TrainerDashboard';
 import ClientDashboard from './pages/ClientDashboard';
+import TrainerActivation from './pages/TrainerActivation';
+import ClientPayment from './pages/ClientPayment';
 import useAuthStore from './store/authStore';
 
 const SecurityLayer = ({ children }) => {
     const { user } = useAuthStore();
 
     useEffect(() => {
+        // Skip security checks in development mode
+        if (import.meta.env.MODE === 'development') return;
+
         // Disable Right Click
         const handleContextMenu = (e) => e.preventDefault();
         document.addEventListener('contextmenu', handleContextMenu);
@@ -37,46 +43,32 @@ const SecurityLayer = ({ children }) => {
     }, []);
 
     return (
-        <div className="select-none relative font-sans">
-            {/* Ambient Background - Global */}
-            <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-black">
-                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-red-900/10 rounded-full blur-[120px] animate-pulse"></div>
-                <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-yellow-600/5 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="select-none relative font-sans min-h-screen bg-black text-white selection:bg-red-500/30">
+            {/* Cinematic Ambient Background */}
+            <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+                <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-red-900/20 rounded-full blur-[140px] animate-pulse-glow"></div>
+                <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-red-600/10 rounded-full blur-[140px] animate-pulse-glow" style={{ animationDelay: '3s' }}></div>
+                <div className="absolute top-[20%] left-[40%] w-[30%] h-[30%] bg-white/5 rounded-full blur-[100px] animate-float-gentle"></div>
+
+                {/* Dynamic Grid Overlay */}
+                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 contrast-150 brightness-150"></div>
+                <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]"></div>
             </div>
 
-            {/* Watermark */}
-            <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-                <div className="absolute inset-0 flex items-center justify-center opacity-[0.02] z-10">
-                    <div className="rotate-45 text-5xl font-black text-white whitespace-nowrap">
-                        {Array(20).fill("FIT WITH DURGESH ").map((t, i) => (
-                            <span key={i} className="block">{t}</span>
+            {/* Premium Watermark */}
+            <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-[0.03]">
+                <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="rotate-12 text-[10vw] font-black tracking-tighter uppercase whitespace-nowrap select-none">
+                        {Array(10).fill("FIT WITH DURGESH ").map((t, i) => (
+                            <span key={i} className="block leading-none italic">{t}</span>
                         ))}
                     </div>
                 </div>
-
-                {/* Animated Floating Icons */}
-                <div className="absolute top-10 left-10 opacity-5 animate-float delay-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="text-red-500">
-                        <path d="m6.5 6.5 11 11" />
-                        <path d="m21 21-1-1" />
-                        <path d="m3 3 1 1" />
-                        <path d="m18 22 4-4" />
-                        <path d="m2 6 4-4" />
-                        <path d="m3 10 7.9-7.9a2.12 2.12 0 0 1 3 3L6 13a2.12 2.12 0 0 1-3-3Z" />
-                        <path d="m11 13 7.9-7.9a2.12 2.12 0 0 1 3 3L14 21a2.12 2.12 0 0 1-3-3Z" />
-                    </svg>
-                </div>
-
-                <div className="absolute top-1/2 right-20 opacity-5 animate-spin-slow">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="text-yellow-500">
-                        <circle cx="12" cy="12" r="10" />
-                        <path d="M12 2v20" />
-                        <path d="M2 12h20" />
-                        <circle cx="12" cy="12" r="3" />
-                    </svg>
-                </div>
             </div>
-            {children}
+
+            <div className="relative z-10">
+                {children}
+            </div>
         </div>
     );
 };
@@ -87,36 +79,39 @@ const DashboardHandler = () => {
     if (!user) return null;
 
     return (
-        <div className="min-h-screen relative z-10 flex flex-col">
-            <nav className="bg-black/50 backdrop-blur-md border-b border-white/10 sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen flex flex-col overflow-x-hidden">
+            <nav className="bg-black/60 backdrop-blur-2xl border-b border-white/5 sticky top-0 z-50">
+                <div className="w-full max-w-full px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-20 items-center">
-                        <div className="flex items-center gap-2">
-                            <div className="w-10 h-10 bg-gradient-to-br from-red-600 to-red-800 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shadow-red-900/50">
+                        <div className="flex items-center gap-3 group cursor-default">
+                            <div className="w-12 h-12 bg-gradient-to-br from-red-600 to-red-900 rounded-xl flex items-center justify-center text-white font-black shadow-xl shadow-red-900/40 group-hover:scale-110 transition-transform duration-500">
                                 FD
                             </div>
                             <div>
-                                <h1 className="text-xl font-black text-white tracking-tight">FIT WITH <span className="text-red-500">DURGESH</span></h1>
-                                <p className="text-[10px] text-gray-400 uppercase tracking-widest">Premium Fitness</p>
+                                <h1 className="text-xl font-black text-white tracking-tighter uppercase group-hover:tracking-normal transition-all duration-500">
+                                    FIT WITH <span className="text-red-600">DY</span>
+                                </h1>
+                                <p className="text-[10px] text-gray-500 uppercase tracking-[0.3em] font-bold">Evolution Performance</p>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-8">
                             <div className="hidden md:flex flex-col items-end">
-                                <span className="text-sm font-bold text-white">{user.name}</span>
-                                <span className="text-xs text-yellow-500 font-semibold px-2 py-0.5 bg-yellow-500/10 rounded-full border border-yellow-500/20">{user.role}</span>
+                                <span className="text-sm font-black text-white uppercase tracking-tight">{user.name}</span>
+                                <span className="text-[10px] text-red-500 font-black uppercase tracking-widest px-2 py-0.5 bg-red-500/10 rounded border border-red-500/20">{user.role}</span>
                             </div>
                             <button
                                 onClick={logout}
-                                className="bg-dark-800 hover:bg-dark-700 text-gray-300 hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition-all border border-dark-700 hover:border-gray-600"
+                                className="group relative px-6 py-2.5 bg-white/5 hover:bg-red-600 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 border border-white/10 hover:border-red-500 overflow-hidden"
                             >
-                                Logout
+                                <span className="relative z-10 group-hover:scale-110 block">Logout</span>
+                                <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-red-900 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                             </button>
                         </div>
                     </div>
                 </div>
             </nav>
-            <main className="flex-1 max-w-7xl mx-auto w-full p-4 sm:p-6 lg:p-8">
+            <main className="flex-1 w-full max-w-full p-4 sm:p-6 lg:p-8 animate-reveal-up">
                 {user.role === 'ADMIN' && <AdminDashboard />}
                 {user.role === 'TRAINER' && <TrainerDashboard />}
                 {user.role === 'CLIENT' && <ClientDashboard />}
@@ -125,54 +120,198 @@ const DashboardHandler = () => {
     );
 }
 
+/**
+ * Protected Route with Payment-Gated Access Control
+ */
 const ProtectedRoute = ({ children }) => {
-    const { isAuthenticated, user } = useAuthStore();
+    const { isAuthenticated, user, token } = useAuthStore();
 
-    if (!isAuthenticated) {
-        return <Navigate to="/login" />;
+    // Gate 1: Must be authenticated
+    if (!token || !isAuthenticated) {
+        return <Navigate to="/login" replace />;
     }
 
-    // Admin always has access
+    // Gate 2: Admin bypass (always has full access)
     if (user?.role === 'ADMIN') {
         return children;
     }
 
-    // Check if Active & Subscription Valid
-    const isExpired = !user?.isActive || (user?.subscriptionExpiresAt && new Date(user.subscriptionExpiresAt) < new Date());
+    // Gate 3: Trainer status check
+    if (user?.role === 'TRAINER') {
+        const accountStatus = user.accountStatus;
 
-    // If we have no subscription date, we assume expired/new user who hasn't paid
-    if (isExpired || !user?.subscriptionExpiresAt) {
-        return <Navigate to="/renew" />;
+        // PENDING or PAYMENT_SUBMITTED trainers → Activation page
+        if (accountStatus === 'PENDING' || accountStatus === 'PAYMENT_SUBMITTED') {
+            return <Navigate to="/trainer-activation" replace />;
+        }
+
+        // REJECTED trainers → Login with message
+        if (accountStatus === 'REJECTED') {
+            return <Navigate to="/login" replace />;
+        }
+
+        // Check subscription expiry for ACTIVE trainers
+        if (accountStatus === 'ACTIVE') {
+            const isExpired = user.subscriptionExpiresAt &&
+                new Date(user.subscriptionExpiresAt) < new Date();
+            if (isExpired) {
+                return <Navigate to="/renew" replace />;
+            }
+        }
+
+        return children;
+    }
+
+    // Gate 4: Client status check
+    if (user?.role === 'CLIENT') {
+        const activationStatus = user.profile?.activationStatus || 'REGISTERED';
+        const hasTrainer = !!user.profile?.trainerId;
+
+        // UNASSIGNED or PENDING_PAYMENT clients with trainer → Payment page
+        if (hasTrainer && (activationStatus === 'UNASSIGNED' || activationStatus === 'PENDING_PAYMENT')) {
+            return <Navigate to="/client-payment" replace />;
+        }
+
+        // REGISTERED clients (no trainer) → Limited dashboard is OK
+
+        // ACTIVE clients → Check questionnaire
+        if (activationStatus === 'ACTIVE') {
+            // Check subscription expiry
+            const isExpired = !user.isActive ||
+                (user.subscriptionExpiresAt && new Date(user.subscriptionExpiresAt) < new Date());
+
+            if (isExpired) {
+                return <Navigate to="/renew" replace />;
+            }
+
+            // Check questionnaire
+            if (!user.profile?.isQuestionnaireFilled) {
+                if (window.location.pathname !== '/questionnaire') {
+                    return <Navigate to="/questionnaire" replace />;
+                }
+            }
+        }
+
+        return children;
+    }
+
+    // Unknown role - deny access
+    return <Navigate to="/login" replace />;
+};
+
+/**
+ * Trainer Activation Route - Only for pending trainers
+ */
+const TrainerActivationRoute = ({ children }) => {
+    const { isAuthenticated, user, token } = useAuthStore();
+
+    if (!token || !isAuthenticated) {
+        return <Navigate to="/login" replace />;
+    }
+
+    if (user?.role !== 'TRAINER') {
+        return <Navigate to="/dashboard" replace />;
+    }
+
+    // If trainer is already active, go to dashboard
+    if (user.accountStatus === 'ACTIVE') {
+        return <Navigate to="/dashboard" replace />;
     }
 
     return children;
 };
 
-// Check auth on app load
-const AuthCheck = ({ children }) => {
-    const { checkAuth } = useAuthStore();
-    useEffect(() => {
-        checkAuth();
-    }, []);
+/**
+ * Client Payment Route - Only for clients with assigned trainer awaiting payment
+ */
+const ClientPaymentRoute = ({ children }) => {
+    const { isAuthenticated, user, token } = useAuthStore();
+
+    if (!token || !isAuthenticated) {
+        return <Navigate to="/login" replace />;
+    }
+
+    if (user?.role !== 'CLIENT') {
+        return <Navigate to="/dashboard" replace />;
+    }
+
+    // If client is already active, go to dashboard
+    if (user.profile?.activationStatus === 'ACTIVE') {
+        return <Navigate to="/dashboard" replace />;
+    }
+
+    // If client has no trainer, go to dashboard (limited)
+    if (!user.profile?.trainerId) {
+        return <Navigate to="/dashboard" replace />;
+    }
+
     return children;
-}
+};
 
 function App() {
+    const { isAuthenticated, isCheckingAuth, checkAuth, logout } = useAuthStore();
+
+    useEffect(() => {
+        checkAuth();
+
+        const handleOffline = () => {
+            logout();
+            window.location.href = '/login';
+        };
+
+        window.addEventListener('offline', handleOffline);
+        return () => window.removeEventListener('offline', handleOffline);
+    }, []);
+
+    if (isCheckingAuth) {
+        return (
+            <div className="min-h-screen bg-black flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-600"></div>
+            </div>
+        );
+    }
+
     return (
         <Router>
-            <AuthCheck>
-                <SecurityLayer>
-                    <Routes>
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/renew" element={<Renewal />} />
-                        <Route path="/" element={
-                            <ProtectedRoute>
-                                <DashboardHandler />
-                            </ProtectedRoute>
-                        } />
-                    </Routes>
-                </SecurityLayer>
-            </AuthCheck>
+            <SecurityLayer>
+                <Routes>
+                    {/* Public Routes */}
+                    <Route path="/" element={!isAuthenticated ? <LandingPage /> : <Navigate to="/dashboard" replace />} />
+                    <Route path="/login" element={<Login />} />
+
+                    {/* Activation/Payment Routes */}
+                    <Route path="/trainer-activation" element={
+                        <TrainerActivationRoute>
+                            <TrainerActivation />
+                        </TrainerActivationRoute>
+                    } />
+                    <Route path="/client-payment" element={
+                        <ClientPaymentRoute>
+                            <ClientPayment />
+                        </ClientPaymentRoute>
+                    } />
+                    <Route path="/renew" element={
+                        isAuthenticated ? <Renewal /> : <Navigate to="/login" replace />
+                    } />
+
+                    {/* Protected Routes */}
+                    <Route path="/questionnaire" element={
+                        <ProtectedRoute>
+                            <Questionnaire />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/plan-in-progress" element={
+                        <ProtectedRoute>
+                            <PlanInProgress />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/dashboard" element={
+                        <ProtectedRoute>
+                            <DashboardHandler />
+                        </ProtectedRoute>
+                    } />
+                </Routes>
+            </SecurityLayer>
         </Router>
     );
 }
