@@ -5,9 +5,13 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// Supabase PostgreSQL Database
+// DATABASE_URL uses the pooler connection (port 6543 with pgbouncer)
+// DIRECT_URL uses direct connection (port 5432) for migrations
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {

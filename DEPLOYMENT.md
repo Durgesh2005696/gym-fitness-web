@@ -1,4 +1,7 @@
 # 🚀 FIT WITH DY - Deployment Guide
+## Using GitHub + Supabase + Render + Cloudflare
+
+---
 
 ## Architecture Overview
 
@@ -16,7 +19,7 @@
 │          │                        ▼                              │
 │          │                 ┌──────────────┐                     │
 │          │                 │   DATABASE   │                     │
-│          │                 │   Render     │                     │
+│          │                 │   Supabase   │                     │
 │          │                 │  PostgreSQL  │                     │
 │          │                 └──────────────┘                     │
 │          │                                                       │
@@ -39,155 +42,171 @@
 - [x] .gitignore configured properly
 - [ ] Production build tested locally
 
-### ✅ Accounts Needed
-- [ ] GitHub account (you have this)
-- [ ] Render account (free tier available)
-- [ ] Cloudflare account (free tier available)
+### ✅ Accounts Needed (All Free Tier Available)
+- [ ] GitHub account ✓ (you have this)
+- [ ] Supabase account (free tier: 500MB database)
+- [ ] Render account (free tier: web service)
+- [ ] Cloudflare account (free tier: unlimited pages)
 
 ---
 
-## PHASE 1: Database Setup (Render PostgreSQL)
+## PHASE 1: Database Setup (Supabase PostgreSQL)
 
-### Step 1.1: Create Render Account
-1. Go to [render.com](https://render.com)
-2. Sign up with GitHub for easy integration
+### Step 1.1: Create Supabase Account
+1. Go to [supabase.com](https://supabase.com)
+2. Click **"Start your project"**
+3. Sign up with GitHub for easy integration
 
-### Step 1.2: Create PostgreSQL Database
-1. Click **"New +"** → **"PostgreSQL"**
+### Step 1.2: Create New Project
+1. Click **"New Project"**
 2. Configure:
    ```
-   Name: fitwithdy-db
-   Database: fitwithdy
-   User: fitwithdy_user
-   Region: Singapore (or closest to you)
-   Plan: Free (90 days) or Starter ($7/month)
+   Organization: [Your organization or create new]
+   Project name: fitwithdy
+   Database Password: [Generate strong password - SAVE THIS!]
+   Region: South Asia (Mumbai) or closest to you
+   Plan: Free
    ```
-3. Click **"Create Database"**
+3. Click **"Create new project"**
 4. Wait for provisioning (1-2 minutes)
-5. Copy the **Internal Database URL** (for backend)
 
-### Step 1.3: Save Database Credentials
+### Step 1.3: Get Database Connection String
+1. Go to **Project Settings** (gear icon)
+2. Click **"Database"** in sidebar
+3. Scroll to **"Connection string"** section
+4. Select **"URI"** tab
+5. Copy the connection string:
+   ```
+   postgresql://postgres.[PROJECT-REF]:[YOUR-PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres
+   ```
+
+### Step 1.4: Configure for Prisma
+For Prisma, use the **Transaction pooler** URL (port 6543) with `?pgbouncer=true`:
 ```env
-DATABASE_URL=postgresql://fitwithdy_user:PASSWORD@HOST:5432/fitwithdy
+DATABASE_URL="postgresql://postgres.[PROJECT-REF]:[YOUR-PASSWORD]@aws-0-ap-south-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
+
+# For migrations, use Direct connection (port 5432):
+DIRECT_URL="postgresql://postgres.[PROJECT-REF]:[YOUR-PASSWORD]@aws-0-ap-south-1.pooler.supabase.com:5432/postgres"
 ```
+
+### Step 1.5: Save Credentials Safely
+Create a secure note with:
+- Project URL
+- Database Password
+- Connection String (pooler)
+- Direct Connection String
 
 ---
 
-## PHASE 2: Backend Deployment (Render Web Service)
+## PHASE 2: Update Prisma for Supabase
 
-### Step 2.1: Prepare Backend for Production
+### Step 2.1: Update Prisma Schema
+Update `backend/prisma/schema.prisma`:
 
-Create `backend/render.yaml`:
-```yaml
-services:
-  - type: web
-    name: fitwithdy-api
-    env: node
-    region: singapore
-    plan: free
-    buildCommand: npm install && npx prisma generate && npx prisma db push
-    startCommand: npm start
-    healthCheckPath: /api/health
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: DATABASE_URL
-        fromDatabase:
-          name: fitwithdy-db
-          property: connectionString
-      - key: JWT_SECRET
-        generateValue: true
-```
-
-### Step 2.2: Update package.json (backend)
-Ensure these scripts exist in `backend/package.json`:
-```json
-{
-  "scripts": {
-    "start": "node src/server.js",
-    "dev": "nodemon src/server.js",
-    "build": "npx prisma generate"
-  }
+```prisma
+generator client {
+  provider = "prisma-client-js"
 }
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ... rest of your models
 ```
 
-### Step 2.3: Add Health Check Endpoint
-Add to `backend/src/server.js`:
-```javascript
-// Health check for Render
-app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
-});
+### Step 2.2: Update Local .env
+Create/update `backend/.env`:
+```env
+DATABASE_URL="postgresql://postgres.[ref]:[password]@aws-0-ap-south-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
+DIRECT_URL="postgresql://postgres.[ref]:[password]@aws-0-ap-south-1.pooler.supabase.com:5432/postgres"
+JWT_SECRET=your-super-secret-jwt-key-here
+FRONTEND_URL=http://localhost:3000
+PORT=5000
 ```
 
-### Step 2.4: Create Render Web Service
-1. Go to Render Dashboard
-2. Click **"New +"** → **"Web Service"**
-3. Connect your GitHub repository
-4. Configure:
+### Step 2.3: Push Schema to Supabase
+```bash
+cd backend
+npx prisma generate
+npx prisma db push
+```
+
+### Step 2.4: Seed the Database
+```bash
+npm run seed
+node prisma/seedFoods.js
+node prisma/seedExercises.js
+node prisma/seedSupplements.js
+```
+
+### Step 2.5: Verify in Supabase Dashboard
+1. Go to Supabase Dashboard
+2. Click **"Table Editor"**
+3. You should see all your tables: User, Food, Exercise, Supplement, etc.
+
+---
+
+## PHASE 3: Backend Deployment (Render)
+
+### Step 3.1: Create Render Account
+1. Go to [render.com](https://render.com)
+2. Sign up with GitHub
+
+### Step 3.2: Create Web Service
+1. Click **"New +"** → **"Web Service"**
+2. Connect your GitHub repository: `gym-fitness-web`
+3. Configure:
    ```
    Name: fitwithdy-api
    Root Directory: backend
    Environment: Node
-   Region: Singapore
+   Region: Singapore (or closest to your Supabase region)
    Branch: main
-   Build Command: npm install && npx prisma generate && npx prisma db push
+   Build Command: npm install && npx prisma generate
    Start Command: npm start
    Plan: Free
    ```
 
-### Step 2.5: Set Environment Variables
-In Render dashboard, add these env vars:
-```
-NODE_ENV=production
-DATABASE_URL=[Your PostgreSQL Internal URL]
-JWT_SECRET=[Generate a strong random string]
-FRONTEND_URL=https://fitwithdy.pages.dev
-PORT=10000
-```
+### Step 3.3: Set Environment Variables
+Click **"Advanced"** → **"Add Environment Variable"**:
 
-### Step 2.6: Deploy
+| Key | Value |
+|-----|-------|
+| `NODE_ENV` | `production` |
+| `DATABASE_URL` | `postgresql://postgres.[ref]:[password]@aws-0-ap-south-1.pooler.supabase.com:6543/postgres?pgbouncer=true` |
+| `DIRECT_URL` | `postgresql://postgres.[ref]:[password]@aws-0-ap-south-1.pooler.supabase.com:5432/postgres` |
+| `JWT_SECRET` | `[generate-random-64-char-string]` |
+| `FRONTEND_URL` | `https://fitwithdy.pages.dev` |
+| `PORT` | `10000` |
+
+### Step 3.4: Deploy
 1. Click **"Create Web Service"**
 2. Wait for build and deployment (5-10 minutes)
-3. Note your backend URL: `https://fitwithdy-api.onrender.com`
+3. Your backend URL: `https://fitwithdy-api.onrender.com`
+
+### Step 3.5: Test Health Check
+```bash
+curl https://fitwithdy-api.onrender.com/api/health
+```
 
 ---
 
-## PHASE 3: Frontend Deployment (Cloudflare Pages)
+## PHASE 4: Frontend Deployment (Cloudflare Pages)
 
-### Step 3.1: Update Frontend for Production
-
-Create `frontend/.env.production`:
-```env
-VITE_API_URL=https://fitwithdy-api.onrender.com
-```
-
-### Step 3.2: Update vite.config.js
-```javascript
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-
-export default defineConfig({
-  plugins: [react()],
-  build: {
-    outDir: 'dist',
-    sourcemap: false
-  }
-})
-```
-
-### Step 3.3: Create Cloudflare Account
+### Step 4.1: Create Cloudflare Account
 1. Go to [cloudflare.com](https://cloudflare.com)
 2. Sign up for free account
-3. Go to **Pages** section
+3. Navigate to **Workers & Pages** → **Pages**
 
-### Step 3.4: Connect to GitHub
-1. Click **"Create a project"**
-2. Click **"Connect to Git"**
-3. Authorize Cloudflare to access GitHub
-4. Select `gym-fitness-web` repository
+### Step 4.2: Connect to GitHub
+1. Click **"Create application"** → **"Pages"** → **"Connect to Git"**
+2. Authorize Cloudflare to access GitHub
+3. Select `gym-fitness-web` repository
 
-### Step 3.5: Configure Build Settings
+### Step 4.3: Configure Build Settings
 ```
 Project name: fitwithdy
 Production branch: main
@@ -197,86 +216,90 @@ Build command: npm run build
 Build output directory: dist
 ```
 
-### Step 3.6: Set Environment Variables
-Click **"Environment variables"** and add:
+### Step 4.4: Set Environment Variables
+Click **"Environment variables"** → **"Add variable"**:
 ```
-VITE_API_URL = https://fitwithdy-api.onrender.com
+Variable name: VITE_API_URL
+Value: https://fitwithdy-api.onrender.com
 ```
 
-### Step 3.7: Deploy
+### Step 4.5: Deploy
 1. Click **"Save and Deploy"**
 2. Wait for build (2-5 minutes)
-3. Your site will be live at: `https://fitwithdy.pages.dev`
+3. Your site: `https://fitwithdy.pages.dev`
 
 ---
 
-## PHASE 4: Post-Deployment Configuration
+## PHASE 5: Image Storage (Supabase Storage)
 
-### Step 4.1: Update Backend CORS
-Update `backend/src/server.js` to allow Cloudflare domain:
-```javascript
-app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'https://fitwithdy.pages.dev',
-    'https://yourdomain.com'
-  ],
-  credentials: true
-}));
+For production, use Supabase Storage instead of local uploads.
+
+### Step 5.1: Enable Storage in Supabase
+1. Go to Supabase Dashboard → **Storage**
+2. Click **"Create a new bucket"**
+3. Configure:
+   ```
+   Name: uploads
+   Public: Yes (for profile pictures)
+   ```
+
+### Step 5.2: Get Storage URL
+Your storage URL will be:
+```
+https://[PROJECT-REF].supabase.co/storage/v1/object/public/uploads/
 ```
 
-### Step 4.2: Update Render Environment
-Add to Render env vars:
-```
-FRONTEND_URL=https://fitwithdy.pages.dev
-```
-
-### Step 4.3: Seed Production Database
-Run in Render Shell (Dashboard → Shell):
+### Step 5.3: Install Supabase Client (Optional Enhancement)
 ```bash
-npx prisma db seed
-node prisma/seedFoods.js
-node prisma/seedExercises.js
-node prisma/seedSupplements.js
+cd backend
+npm install @supabase/supabase-js
 ```
 
----
-
-## PHASE 5: Custom Domain (Optional)
-
-### For Cloudflare Pages:
-1. Go to your project → **Custom domains**
-2. Add domain: `app.fitwithdy.com`
-3. Update DNS records as instructed
-
-### For Render:
-1. Go to your web service → **Settings** → **Custom Domains**
-2. Add domain: `api.fitwithdy.com`
-3. Update DNS records
+> Note: For MVP, you can continue using local uploads. Files will reset on Render free tier restarts.
 
 ---
 
 ## 📊 Environment Variables Summary
 
 ### Backend (Render)
-| Variable | Value | Description |
-|----------|-------|-------------|
-| `NODE_ENV` | `production` | Environment mode |
-| `DATABASE_URL` | `postgresql://...` | PostgreSQL connection |
-| `JWT_SECRET` | `[random-string]` | JWT signing key |
-| `FRONTEND_URL` | `https://fitwithdy.pages.dev` | CORS allowed origin |
-| `PORT` | `10000` | Server port |
+| Variable | Example Value |
+|----------|---------------|
+| `NODE_ENV` | `production` |
+| `DATABASE_URL` | `postgresql://postgres.[ref]:[pwd]@...pooler.supabase.com:6543/postgres?pgbouncer=true` |
+| `DIRECT_URL` | `postgresql://postgres.[ref]:[pwd]@...pooler.supabase.com:5432/postgres` |
+| `JWT_SECRET` | `your-super-secret-key-minimum-32-chars` |
+| `FRONTEND_URL` | `https://fitwithdy.pages.dev` |
+| `PORT` | `10000` |
 
 ### Frontend (Cloudflare)
-| Variable | Value | Description |
-|----------|-------|-------------|
-| `VITE_API_URL` | `https://fitwithdy-api.onrender.com` | Backend API URL |
+| Variable | Example Value |
+|----------|---------------|
+| `VITE_API_URL` | `https://fitwithdy-api.onrender.com` |
+
+---
+
+## 💰 Pricing Summary (All Free Tier)
+
+| Service | Free Tier Includes |
+|---------|-------------------|
+| **Supabase** | 500MB database, 1GB file storage, 50,000 monthly active users |
+| **Render** | 750 hours/month, auto-sleeps after 15min inactivity |
+| **Cloudflare Pages** | Unlimited sites, 500 builds/month, unlimited bandwidth |
+| **GitHub** | Unlimited public repos |
+
+### Total Cost: **$0/month** 🎉
+
+### Recommended Production Upgrade:
+| Service | Plan | Cost |
+|---------|------|------|
+| Supabase | Pro | $25/month |
+| Render | Starter | $7/month |
+| Cloudflare | Free | $0/month |
+| **Total** | | **~$32/month** |
 
 ---
 
 ## 🔄 CI/CD Pipeline
-
-Both platforms auto-deploy on push to `main` branch:
 
 ```
 ┌──────────┐     ┌──────────┐     ┌──────────────────┐
@@ -284,98 +307,117 @@ Both platforms auto-deploy on push to `main` branch:
 │  Code    │push │   main   │     │  • Render        │
 │          │     │  branch  │     │  • Cloudflare    │
 └──────────┘     └──────────┘     └──────────────────┘
+                                          │
+                                          ▼
+                                   ┌──────────────┐
+                                   │   Supabase   │
+                                   │  (Database)  │
+                                   └──────────────┘
 ```
 
 ---
 
 ## 🧪 Post-Deployment Testing
 
-### Test Checklist:
-- [ ] Frontend loads at Cloudflare URL
-- [ ] API health check: `https://fitwithdy-api.onrender.com/api/health`
-- [ ] User registration works
-- [ ] Login works for Admin/Trainer/Client
-- [ ] Image uploads work
-- [ ] Payment flow works
-- [ ] All CRUD operations work
-
-### Test Commands:
+### Quick Tests:
 ```bash
-# Test backend health
+# 1. Test API health
 curl https://fitwithdy-api.onrender.com/api/health
 
-# Test login
+# 2. Test frontend loads
+# Open: https://fitwithdy.pages.dev
+
+# 3. Test login (after seeding)
 curl -X POST https://fitwithdy-api.onrender.com/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@fitwithdy.com","password":"admin123"}'
 ```
 
----
-
-## 💰 Pricing Summary
-
-### Free Tier:
-| Service | Plan | Limitations |
-|---------|------|-------------|
-| Render PostgreSQL | Free | 90 days, 1GB storage |
-| Render Web Service | Free | Sleeps after 15min inactivity |
-| Cloudflare Pages | Free | Unlimited sites, 500 builds/month |
-
-### Recommended Production:
-| Service | Plan | Cost |
-|---------|------|------|
-| Render PostgreSQL | Starter | $7/month |
-| Render Web Service | Starter | $7/month |
-| Cloudflare Pages | Free | $0/month |
-| **Total** | | **~$14/month** |
+### Checklist:
+- [ ] Frontend loads correctly
+- [ ] API health check responds
+- [ ] Admin login works
+- [ ] Trainer login works
+- [ ] Client login works
+- [ ] Food Library loads
+- [ ] Workout Library loads
+- [ ] Supplement Library loads
+- [ ] Image uploads work
 
 ---
 
 ## 🚨 Troubleshooting
 
-### Backend not starting:
-1. Check Render logs for errors
-2. Verify DATABASE_URL is correct
-3. Ensure Prisma migrations ran
+### "Database connection failed"
+1. Check DATABASE_URL format includes `?pgbouncer=true`
+2. Verify password doesn't have special chars that need encoding
+3. Ensure Supabase project is active (not paused)
 
-### Frontend API errors:
-1. Check VITE_API_URL is set correctly
-2. Verify CORS is configured for Cloudflare domain
-3. Check browser console for errors
+### "CORS error"
+1. Verify FRONTEND_URL in Render matches your Cloudflare URL
+2. Check for trailing slashes
 
-### Database connection issues:
-1. Use Internal URL (not External) for Render services
-2. Check PostgreSQL status in Render dashboard
+### "Prisma generate failed"
+1. Ensure both DATABASE_URL and DIRECT_URL are set
+2. Run `npx prisma generate` before `prisma db push`
 
-### Images not uploading:
-1. Configure cloud storage (Cloudinary/S3) for production
-2. Local uploads won't persist on Render free tier
+### "Tables not found in Supabase"
+1. Run `npx prisma db push` from local with correct .env
+2. Don't use Supabase's SQL editor to create tables (use Prisma)
+
+### "Render service sleeping"
+- Free tier sleeps after 15min. First request takes ~30s to wake up.
+- Upgrade to Starter plan ($7/mo) to prevent sleeping.
 
 ---
 
-## 📁 File Changes Required
+## 📁 Quick Reference
 
-The following files should be updated before deployment:
+### URLs (After Deployment)
+| Service | URL |
+|---------|-----|
+| Frontend | `https://fitwithdy.pages.dev` |
+| Backend API | `https://fitwithdy-api.onrender.com` |
+| Supabase Dashboard | `https://supabase.com/dashboard` |
+| GitHub Repo | `https://github.com/Durgesh2005696/gym-fitness-web` |
 
-1. `backend/src/server.js` - Add health check, update CORS
-2. `frontend/.env.production` - Add production API URL
-3. `backend/package.json` - Ensure start script exists
+### Default Credentials (After Seeding)
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | `admin@fitwithdy.com` | `admin123` |
+| Trainer | `trainer@fitwithdy.com` | `trainer123` |
+| Client | `client@fitwithdy.com` | `client123` |
 
 ---
 
 ## 🎯 Quick Start Commands
 
 ```bash
-# Test production build locally
-cd frontend && npm run build && npm run preview
+# Update Prisma for Supabase
+cd backend
+npx prisma generate
+npx prisma db push
 
-# Push to deploy
+# Seed database
+npm run seed
+node prisma/seedFoods.js
+node prisma/seedExercises.js
+node prisma/seedSupplements.js
+
+# Test production build
+cd ../frontend
+npm run build
+npm run preview
+
+# Push and deploy
+cd ..
 git add -A
-git commit -m "chore: production deployment config"
+git commit -m "chore: production deployment"
 git push origin main
 ```
 
 ---
 
 **Created:** January 30, 2026  
+**Stack:** Supabase + Render + Cloudflare Pages  
 **Repository:** https://github.com/Durgesh2005696/gym-fitness-web
